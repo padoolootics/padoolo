@@ -11,6 +11,21 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'padoolo-nine.vercel.app',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'padoolo.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.padoolo.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'secure.gravatar.com',
         pathname: '/**',
       },
