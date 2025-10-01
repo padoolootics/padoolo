@@ -2,7 +2,17 @@ import Banner from "@/components/Category/Banner";
 import PageServices from "@/lib/api/services/pageServices";
 
 const AboutPage = async () => {
-  const pageContent = await PageServices.getPageById(287);
+  let pageContent = null;
+
+  try {
+    pageContent = await PageServices.getPageById(287); // Fetch page content
+  } catch (error) {
+    console.error("Error fetching page content:", error);
+    pageContent = { 
+      title: { rendered: "Page not found" },
+      content: { rendered: "<p>There was an error fetching content</p>" },
+    };
+  }
   return (
     <div className="about-page-container">
       <Banner

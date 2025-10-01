@@ -17,46 +17,77 @@ import { Product } from "@/types/products";
 // };
 
 export default async function Home() {
-  const pageData = await PageServices.getPageBySlug("home-page");
+  // const pageData = await PageServices.getPageBySlug("home-page");
 
-  const spotlightRawProducts = await ProductServices.getProductsByCategory(
-    pageData?.acf?.spotlight_deals
-  );
-  const newArrivalsRawProducts = await ProductServices.getProductsByCategory(
-    pageData?.acf?.new_arrivals
-  );
-  const sunglassesRawProducts = await ProductServices.getProductsByCategory(
-    pageData?.acf?.sunglasses_category_id
-  );
-  const eyeglassesRawProducts = await ProductServices.getProductsByCategory(
-    pageData?.acf?.eyeglasses_category_id
-  );
-  const latestRawProducts = await ProductServices.getProductsByCategory(
-    pageData?.acf?.latest_products_category_id
-  );
-  const bestsellersRawProducts = await ProductServices.getProductsByCategory(
-    pageData?.acf?.bestsellers_category_id
-  );
-  const watchRawProducts = await ProductServices.getProductsByCategory(
-    pageData?.acf?.watch_category_id
-  );
+  // const spotlightRawProducts = await ProductServices.getProductsByCategory(
+  //   pageData?.acf?.spotlight_deals
+  // );
+  // const newArrivalsRawProducts = await ProductServices.getProductsByCategory(
+  //   pageData?.acf?.new_arrivals
+  // );
+  // const sunglassesRawProducts = await ProductServices.getProductsByCategory(
+  //   pageData?.acf?.sunglasses_category_id
+  // );
+  // const eyeglassesRawProducts = await ProductServices.getProductsByCategory(
+  //   pageData?.acf?.eyeglasses_category_id
+  // );
+  // const latestRawProducts = await ProductServices.getProductsByCategory(
+  //   pageData?.acf?.latest_products_category_id
+  // );
+  // const bestsellersRawProducts = await ProductServices.getProductsByCategory(
+  //   pageData?.acf?.bestsellers_category_id
+  // );
+  // const watchRawProducts = await ProductServices.getProductsByCategory(
+  //   pageData?.acf?.watch_category_id
+  // );
 
-  // const mapWooToProduct = (p: any) => ({
-  //   id: p.id,
-  //   name: p.name,
-  //   slug: p.slug,
-  //   price: p.price,
-  //   image: p.images?.[0]?.src,
-  //   category: p.categories?.[0]?.name || "",
-  // });
+  let pageData = null;
+  let spotlightRawProducts: any = null;
+  let newArrivalsRawProducts: any = null;
+  let sunglassesRawProducts: any = null;
+  let eyeglassesRawProducts: any = null;
+  let latestRawProducts: any = null;
+  let bestsellersRawProducts: any = null;
+  let watchRawProducts: any = null;
 
-  // const spotlightProducts = spotlightRawProducts.map(mapWooToProduct);
-  // const newArrivalProducts = newArrivalsRawProducts.map(mapWooToProduct);
-  // const sunglassesProducts = sunglassesRawProducts.map(mapWooToProduct);
-  // const eyeglassesProducts = eyeglassesRawProducts.map(mapWooToProduct);
-  // const latestProducts = latestRawProducts.map(mapWooToProduct);
-  // const bestsellersProducts = bestsellersRawProducts.map(mapWooToProduct);
-  // const watchProducts = watchRawProducts.map(mapWooToProduct);
+  try {
+    // Fetch page data
+    pageData = await PageServices.getPageBySlug("home-page");
+
+    // Fetch products by categories
+    spotlightRawProducts = await ProductServices.getProductsByCategory(
+      pageData?.acf?.spotlight_deals
+    );
+    newArrivalsRawProducts = await ProductServices.getProductsByCategory(
+      pageData?.acf?.new_arrivals
+    );
+    sunglassesRawProducts = await ProductServices.getProductsByCategory(
+      pageData?.acf?.sunglasses_category_id
+    );
+    eyeglassesRawProducts = await ProductServices.getProductsByCategory(
+      pageData?.acf?.eyeglasses_category_id
+    );
+    latestRawProducts = await ProductServices.getProductsByCategory(
+      pageData?.acf?.latest_products_category_id
+    );
+    bestsellersRawProducts = await ProductServices.getProductsByCategory(
+      pageData?.acf?.bestsellers_category_id
+    );
+    watchRawProducts = await ProductServices.getProductsByCategory(
+      pageData?.acf?.watch_category_id
+    );
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    // Optionally, provide fallback values or handle error appropriately
+    pageData = { acf: {} }; // Example fallback
+    spotlightRawProducts = [];
+    newArrivalsRawProducts = [];
+    sunglassesRawProducts = [];
+    eyeglassesRawProducts = [];
+    latestRawProducts = [];
+    bestsellersRawProducts = [];
+    watchRawProducts = [];
+  }
 
   return (
     <div>
@@ -125,9 +156,6 @@ export default async function Home() {
           <NewArrival products={watchRawProducts} />
         </div>
       </div>
-
-
-
 
       {/* SECTION 6: Latest Tabbed Products */}
       <ProductTabber

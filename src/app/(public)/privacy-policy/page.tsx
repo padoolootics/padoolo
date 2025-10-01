@@ -2,7 +2,18 @@ import Banner from "@/components/Category/Banner";
 import PageServices from "@/lib/api/services/pageServices";
 
 const PrivacyPage = async () => {
-  const pageContent = await PageServices.getPageById(3);
+  // const pageContent = await PageServices.getPageById(3);
+  let pageContent = null;
+
+  try {
+    pageContent = await PageServices.getPageById(3); // Fetch page content
+  } catch (error) {
+    console.error("Error fetching page content:", error);
+    pageContent = { 
+      title: { rendered: "Page not found" },
+      content: { rendered: "<p>There was an error fetching content</p>" },
+    };
+  }
   return (
     <div className="page-container">
       <Banner

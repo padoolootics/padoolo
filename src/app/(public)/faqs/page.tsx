@@ -3,7 +3,18 @@ import PageServices from "@/lib/api/services/pageServices";
 import FAQ from "./faqs";
 
 const FAQPage = async () => {
-  const pageContent = await PageServices.getPageById(338);
+  // const pageContent = await PageServices.getPageById(338);
+  let pageContent = null;
+
+  try {
+    pageContent = await PageServices.getPageById(338); // Fetch page content
+  } catch (error) {
+    console.error("Error fetching page content:", error);
+    pageContent = { 
+      title: { rendered: "Page not found" },
+      content: { rendered: "<p>There was an error fetching content</p>" },
+    };
+  }
   return (
     <div className="page-container">
       <Banner
