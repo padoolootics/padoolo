@@ -48,7 +48,7 @@ export default function NewArrivalSection({ products }: { products: Product[] })
 
                   </figure>*/}
 
-                  <figure className="flex items-center overflow-hidden justify-center w-full aspect-[4/5] bg-[#EDECE8] rounded-md">
+                  <figure className="flex items-center overflow-hidden justify-center w-full aspect-[4/5] bg-[#ffffff] border border-gray-200 rounded-md">
                     <Image
                       src={product.images[0].src}
                       alt={product.name}

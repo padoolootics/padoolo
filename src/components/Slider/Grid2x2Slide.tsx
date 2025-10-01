@@ -52,7 +52,7 @@ const Grid2x2Slide: React.FC<Grid2x2SlideProps> = ({ products }) => {
                 />
               </figure>*/}
 
-              <figure className="flex items-center overflow-hidden justify-center w-full aspect-[4/5] bg-[#EDECE8] rounded-md">
+              <figure className="flex items-center overflow-hidden justify-center w-full aspect-[4/5] border border-gray-200 bg-[#ffffff] rounded-md">
                 <Image
                   src={product.images[0].src}
                   alt={product.name}

@@ -36,7 +36,7 @@ const Row4Slide: React.FC<Row4SlideProps> = ({ product }) => {
           <Image
             src={product.images[0].src}
             alt={product.name}
-            className="mx-auto w-full h-50 bg-gray-200"
+            className="mx-auto w-full h-50 bg-white border border-gray-200 object-contain"
             width={240}
             height={300}
           />

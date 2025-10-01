@@ -131,7 +131,7 @@ export default function CenterTabbedSlider({
                           />
             </figure>*/}
 
-                  <figure className="flex items-center overflow-hidden justify-center w-full aspect-[4/5] bg-[#EDECE8] rounded-md">
+                  <figure className="flex items-center overflow-hidden justify-center w-full aspect-[4/5] border border-gray-200 bg-[#ffffff] rounded-md">
                     <Image
                       src={p.images ? p.images[0].src : '/placeholder.jpg'}
                       alt={p.name}
