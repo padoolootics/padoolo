@@ -196,9 +196,11 @@ export const authOptions: AuthOptions = {
         } catch (error: any) {
           if (error.response?.data?.error) {
             // Forward specific error messages from backend
+            console.error("SignIn error:", error.response.data.error);
             throw new Error(error.response.data.error);
           }
           if (error.message?.startsWith("account_exists_")) {
+            console.error("SignIn error in here:", error.message);
             // Rethrow the account exists error
             throw new Error(error.message);
           }
