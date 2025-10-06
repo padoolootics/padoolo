@@ -185,6 +185,7 @@ export const authOptions: AuthOptions = {
           if (userData.exists) {
             if (userData.authType !== "google") {
               // User exists but with different auth method
+              console.error("Account exists with different auth type:", userData.authType);
               throw new Error(`account_exists_${userData.authType}`);
             }
             // User exists with Google auth, allow sign in

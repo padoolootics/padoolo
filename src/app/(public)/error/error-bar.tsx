@@ -19,7 +19,7 @@ export default function AuthErrorPage() {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Login Error</h1>
+      <h1>Login Error!</h1>
       <p>{message}</p>
       <button onClick={() => router.push("/login")}>Go back to Login</button>
     </div>
