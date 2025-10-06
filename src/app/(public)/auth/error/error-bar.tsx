@@ -18,10 +18,17 @@ export default function AuthErrorPage() {
   }
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Login Error!</h1>
-      <p>{message}</p>
-      <button onClick={() => router.push("/login")}>Go back to Login</button>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <div className="bg-white rounded-2xl p-8 max-w-lg w-full text-center">
+        <h1 className="text-2xl font-semibold text-gray-600 mb-4">Login Error!</h1>
+        <p className="text-gray-700 mb-6">{message}</p>
+        <button
+          onClick={() => router.push("/login")}
+          className="px-6 py-2 rounded-lg bg-yellow-600 cursor-pointer text-white font-medium hover:bg-yellow-700 transition"
+        >
+          Go back to Login
+        </button>
+      </div>
     </div>
   );
 }
