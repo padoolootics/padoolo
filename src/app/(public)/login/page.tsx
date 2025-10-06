@@ -137,15 +137,30 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
-    signIn("google", {
-      callbackUrl: "/dashboard", // Redirect after successful login
+    // signIn("google", {
+    //   callbackUrl: "/dashboard", // Redirect after successful login
+    // });
+
+    const result = await signIn("google", {
+      callbackUrl: "/dashboard",
+      redirect: false, // Prevent auto-redirect
     });
+
+    if (result?.error) {
+      // 👇 redirect manually to your error page
+      router.push(`/auth/error?error=${result.error}`);
+    } else if (result?.url) {
+      // 👇 successful login → redirect to dashboard
+      router.push(result.url);
+    }
+
+    setGoogleLoading(false);
   };
 
   // Show loading state for both credential and Google login
-  if ( googleLoading) {
+  if (googleLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100">
         <ArrowPathIcon className="h-12 w-12 text-gray-500 animate-spin" />

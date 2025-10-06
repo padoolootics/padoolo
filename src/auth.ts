@@ -4,6 +4,7 @@ import type { JWT } from "next-auth/jwt";
 import { Session, User } from "next-auth";
 import { AuthOptions } from "next-auth/core/types";
 import axios from "axios";
+import { redirect } from "next/navigation";
 
 // Extend the built-in session types
 declare module "next-auth" {
@@ -57,7 +58,7 @@ export const authOptions: AuthOptions = {
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         try {
@@ -77,10 +78,14 @@ export const authOptions: AuthOptions = {
               }
             );
             wpToken = wpTokenResponse.data.token;
-            userId = wpTokenResponse.data.user_id || wpTokenResponse.data.user?.id;
+            userId =
+              wpTokenResponse.data.user_id || wpTokenResponse.data.user?.id;
             console.log("WordPress userId:", userId);
           } catch (wpError: any) {
-            console.error("WordPress JWT token generation failed:", wpError.response?.data || wpError.message);
+            console.error(
+              "WordPress JWT token generation failed:",
+              wpError.response?.data || wpError.message
+            );
             throw new Error("Invalid credentials");
           }
 
@@ -97,12 +102,14 @@ export const authOptions: AuthOptions = {
 
             if (checkResponse.data.exists) {
               if (checkResponse.data.authType !== "credentials") {
-                throw new Error(`account_exists_${checkResponse.data.authType}`);
+                throw new Error(
+                  `account_exists_${checkResponse.data.authType}`
+                );
               }
               wooUserId = checkResponse.data.wooUserId;
             }
           } catch (error: any) {
-            if (error.message?.startsWith('account_exists_')) {
+            if (error.message?.startsWith("account_exists_")) {
               throw new Error(error.message);
             }
             console.warn("User check failed, proceeding with creation:", error);
@@ -116,27 +123,31 @@ export const authOptions: AuthOptions = {
                 `${WORDPRESS_URL}/wp-json/wp/v2/users/me`,
                 {
                   headers: {
-                    Authorization: `Bearer ${wpToken}`
-                  }
+                    Authorization: `Bearer ${wpToken}`,
+                  },
                 }
               );
 
               const userInfo = userInfoResponse.data;
-              
+
               const createResponse = await axios.post(
                 `${API_BASE_URL}/api/auth/create-user`,
                 {
                   email: credentials.email,
-                  name: userInfo.name || userInfo.display_name || credentials.email,
+                  name:
+                    userInfo.name || userInfo.display_name || credentials.email,
                   password: credentials.password,
                   authType: "credentials",
                 }
               );
-              
+
               wooUserId = createResponse.data.wooUserId;
               console.log("User created in WooCommerce with ID:", wooUserId);
             } catch (createError) {
-              console.error("Failed to create user in WooCommerce:", createError);
+              console.error(
+                "Failed to create user in WooCommerce:",
+                createError
+              );
               // Continue without WooCommerce user ID
             }
           }
@@ -150,9 +161,9 @@ export const authOptions: AuthOptions = {
             wooUserId: wooUserId || undefined,
             wpToken: wpToken || undefined,
             userId: userId?.toString(), // Set userId explicitly
-            image: '',
-            phone: '',
-            apiToken: '',
+            image: "",
+            phone: "",
+            apiToken: "",
           };
 
           return user;
@@ -160,8 +171,8 @@ export const authOptions: AuthOptions = {
           console.error("Credentials authorization failed:", error);
           throw new Error(error.message || "Authentication failed");
         }
-      }
-    })
+      },
+    }),
   ],
   session: {
     strategy: "jwt",
@@ -182,18 +193,28 @@ export const authOptions: AuthOptions = {
 
           const userData = response.data;
 
-          if (userData.exists) {
-            if (userData.authType !== "google") {
-              // User exists but with different auth method
-              console.error("Account exists with different auth type:", userData.authType);
-              throw new Error(`account_exists_${userData.authType}`);
-            }
-            // User exists with Google auth, allow sign in
-            return true;
+          console.log('*****************userData 88 ***************', userData);
+
+          if (userData.exists && userData.authType !== "google") {
+            // ❌ Instead of throw
+            return false; // 👈 blocks login, sends user to /auth/error
           }
 
-          // User doesn't exist, allow sign in (will be created in WooCommerce)
           return true;
+
+          // if (userData.exists) {
+          //   if (userData.authType !== "google") {
+          //     // User exists but with different auth method
+          //     // redirect('/auth/error?res=credentialBased');
+          //     // console.error("Account exists with different auth type:", userData.authType);
+          //     throw new Error(`account_exists_${userData.authType}`);
+          //   }
+          //   // User exists with Google auth, allow sign in
+          //   return true;
+          // }
+
+          // User doesn't exist, allow sign in (will be created in WooCommerce)
+          // return true;
         } catch (error: any) {
           if (error.response?.data?.error) {
             // Forward specific error messages from backend
@@ -264,8 +285,12 @@ export const authOptions: AuthOptions = {
               );
 
               wpToken = wpTokenResponse.data.token;
-              userId = wpTokenResponse.data.user_id || wpTokenResponse.data.user?.id;
-              console.log("Generated WordPress JWT token:", wpTokenResponse.data);
+              userId =
+                wpTokenResponse.data.user_id || wpTokenResponse.data.user?.id;
+              console.log(
+                "Generated WordPress JWT token:",
+                wpTokenResponse.data
+              );
             } catch (wpError) {
               console.warn("Failed to generate WordPress JWT token:", wpError);
               // Continue without WP token
@@ -274,11 +299,14 @@ export const authOptions: AuthOptions = {
             return {
               ...token,
               accessToken: account.access_token,
-              accessTokenExpires: Date.now() + (Number(account.expires_in) || 3600) * 1000,
+              accessTokenExpires:
+                Date.now() + (Number(account.expires_in) || 3600) * 1000,
               authType: "google",
               wooUserId: wooUserId,
               wpToken: wpToken,
-              wpTokenExpires: wpToken ? Date.now() + 24 * 60 * 60 * 1000 : undefined,
+              wpTokenExpires: wpToken
+                ? Date.now() + 24 * 60 * 60 * 1000
+                : undefined,
               userId: userId?.toString() || user.id, // Set userId from WordPress or use Google ID
             };
           } catch (error) {
@@ -287,7 +315,8 @@ export const authOptions: AuthOptions = {
             return {
               ...token,
               accessToken: account.access_token,
-              accessTokenExpires: Date.now() + (Number(account.expires_in) || 3600) * 1000,
+              accessTokenExpires:
+                Date.now() + (Number(account.expires_in) || 3600) * 1000,
               authType: "google",
               userId: user.id, // At least set the Google ID
             };
@@ -297,13 +326,15 @@ export const authOptions: AuthOptions = {
         // Handle credentials sign-in
         if (account.provider === "credentials" && user) {
           const customUser = user as User;
-          
+
           return {
             ...token,
             authType: "credentials",
             wooUserId: customUser.wooUserId,
             wpToken: customUser.wpToken,
-            wpTokenExpires: customUser.wpToken ? Date.now() + 24 * 60 * 60 * 1000 : undefined,
+            wpTokenExpires: customUser.wpToken
+              ? Date.now() + 24 * 60 * 60 * 1000
+              : undefined,
             userId: customUser.userId || customUser.id, // Use userId or fallback to id
           };
         }
@@ -322,12 +353,12 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }) {
-       (session as any).accessToken = token.accessToken;
-       (session as any).authType = token.authType;
-       (session as any).wooUserId = token.wooUserId;
-       (session as any).wpToken = token.wpToken;
-       (session as any).userId = token.userId; // Add userId to session
-      
+      (session as any).accessToken = token.accessToken;
+      (session as any).authType = token.authType;
+      (session as any).wooUserId = token.wooUserId;
+      (session as any).wpToken = token.wpToken;
+      (session as any).userId = token.userId; // Add userId to session
+
       console.log("Session callback - User ID:", token.userId);
       return session;
     },
