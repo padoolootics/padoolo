@@ -269,7 +269,7 @@ const LoginPage = () => {
             <button
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 cursor-pointer py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
               {googleLoading ? (
                 <ArrowPathIcon className="h-5 w-5 animate-spin" />
@@ -289,6 +289,10 @@ const LoginPage = () => {
               Don{"'"}t have an account?{" "}
               <a href="/register" className="text-blue-600 hover:underline">
                 Sign up
+              </a>
+              ,{" "}Lost Password?{" "}
+              <a href="/forgot-password" className="text-blue-600 hover:underline">
+                Forgot Password
               </a>
             </p>
           </div>
