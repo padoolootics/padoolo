@@ -5,8 +5,22 @@ const WOOCOMMERCE_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL;
 const CONSUMER_KEY = process.env.WOOCOMMERCE_CONSUMER_KEY;
 const CONSUMER_SECRET = process.env.WOOCOMMERCE_CONSUMER_SECRET;
 
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
-const PAYPAL_API_BASE_URL = "https://api-m.sandbox.paypal.com";
+// const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+
+const PAYPAL_API_BASE_URL =
+  process.env.APP_MODE === 'testing'
+    ? 'https://api-m.sandbox.paypal.com'
+    : 'https://api-m.paypal.com';
+
+const PAYPAL_CLIENT_ID =
+  process.env.APP_MODE === 'testing'
+    ? process.env.PAYPAL_CLIENT_ID
+    : process.env.PAYPAL_CLIENT_PROD_ID;
+
+const PAYPAL_CLIENT_SECRET =
+  process.env.APP_MODE === 'testing'
+    ? process.env.PAYPAL_CLIENT_SECRET
+    : process.env.PAYPAL_CLIENT_PROD_SECRET;
 
 // Function to generate an access token for PayPal API calls
 async function generateAccessToken(): Promise<string> {
