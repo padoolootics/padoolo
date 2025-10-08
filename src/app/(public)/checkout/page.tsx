@@ -83,7 +83,7 @@ const CheckoutPage = () => {
   const [paymentGateways, setPaymentGateways] = useState<PaymentGateway[]>([]);
   const [isLoadingGateways, setIsLoadingGateways] = useState(true);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>("cod");
+    useState<string>("ppcp-gateway"); // cod
   const [cartData, setCartData] = useState<CartTotalResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
@@ -1112,7 +1112,7 @@ const CheckoutPage = () => {
                       <ArrowPathIcon className="h-6 w-6 text-gray-500 animate-spin" />
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-4 hidden">
                       {paymentGateways.length > 0 ? (
                         paymentGateways.map((gateway) => (
                           <label
