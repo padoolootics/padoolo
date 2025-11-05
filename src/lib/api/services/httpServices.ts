@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 const instance: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_WP_API_URL, // You can configure this in .env file
+  baseURL: process.env.NEXT_PUBLIC_WP_API_URL,
   timeout: 50000,
   headers: {
     Accept: "application/json",

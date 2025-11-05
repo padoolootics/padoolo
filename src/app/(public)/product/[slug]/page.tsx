@@ -3,7 +3,6 @@ import ProductDetail from "../../components/ProductDetail";
 import Link from "next/link";
 import "swiper/css";
 import "swiper/css/navigation";
-import RelatedProductSlider from "../../components/RelatedProductsSlider";
 import ProductTabber from "../../components/Tabber";
 
 export default async function Page({

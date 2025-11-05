@@ -16,6 +16,7 @@ import WishlistButton from "@/components/WishlistButton";
 import ProductImageSwiper from "../product/[slug]/SwiperSlider";
 import ProductShareButton from "@/components/ShareButton";
 import ProductReviews from "@/components/ProductReviews";
+import ZipCodeChecker from "../product/ZipcodeChecker";
 
 type Props = {
   product: ProductVariation;
@@ -361,11 +362,12 @@ export default function ProductDetail({ product, discount }: Props) {
             </div>
 
             {/* zip code section */}
-            <div className="pt-4">
+            <div className="pt-4 border-b border-[#BDBDBD] pb-5">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 {/* Zip Code Input & Button */}
-                <div className="w-[60%] flex flex-col gap-2">
-                  <div className="flex border border-gray-300 overflow-hidden">
+                <div className="w-[70%] flex flex-col gap-2">
+
+                  {/* <div className="flex border border-gray-300 overflow-hidden">
                     <input
                       type="text"
                       placeholder="Enter zip your zipcode"
@@ -374,11 +376,14 @@ export default function ProductDetail({ product, discount }: Props) {
                     <button className="bg-[#D99E46] text-white px-6 py-2 hover:bg-yellow-700 transition">
                       Apply
                     </button>
-                  </div>
+                  </div> */}
+
+                  <ZipCodeChecker />
+
 
                   {/* Offer + Card Icons */}
                   <div className="flex items-center gap-4">
-                    <p className="text-[12px] text-gray-600">
+                    <p className="text-[14px] text-gray-600">
                       Pay by credit cards.
                     </p>
                     <div className="flex gap-2">
@@ -405,10 +410,10 @@ export default function ProductDetail({ product, discount }: Props) {
                       />
                     </figure>
                     <Link href={"/shipping-and-returns-policy"}>
-                      <span>Shipping and Return</span>
+                      <span>Shipping Policy</span>
                     </Link>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 hidden">
                     <figure>
                       <Image
                         src="/eye-svg.svg"
