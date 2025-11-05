@@ -365,7 +365,7 @@ export default function ProductDetail({ product, discount }: Props) {
             <div className="pt-4 border-b border-[#BDBDBD] pb-5">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 {/* Zip Code Input & Button */}
-                <div className="w-[70%] flex flex-col gap-2">
+                <div className="w-[100%] flex flex-col gap-2 md:w-[70%]">
 
                   {/* <div className="flex border border-gray-300 overflow-hidden">
                     <input
