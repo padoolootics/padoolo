@@ -6,11 +6,15 @@ import ProductServices from "@/lib/api/services/ProductServices";
 import ProductTabber from "../../components/Tabber";
 import Link from "next/link";
 
-type Props = {
-  params: { slug: string };
-};
+// type Props = {
+//   params: { slug: string };
+// };
 
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await params;
   //   const productId = await ProductServices.getProductBySlug(params.slug);
 
