@@ -1,53 +1,51 @@
+import { notFound } from "next/navigation";
+// import { fetchProductById, fetchProductVariations } from '@/lib/woo-api';
+import { Product, ProductVariation } from "../types/woocommerce";
+import ProductClient from "./ProductClient";
 import ProductServices from "@/lib/api/services/ProductServices";
-import ProductDetail from "../../components/ProductDetail";
-import Link from "next/link";
-import "swiper/css";
-import "swiper/css/navigation";
 import ProductTabber from "../../components/Tabber";
+import Link from "next/link";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+type Props = {
+  params: { slug: string };
+};
+
+export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
+  //   const productId = await ProductServices.getProductBySlug(params.slug);
 
-  const productDetails: any = await ProductServices.getProductBySlug(slug);
-  const finalProduct = productDetails[0];
-  const product = {
-    price: "290.00",
-    regular_price: "290.00",
-    sale_price: "265.00",
-  };
+  //   if (!productId) {
+  //     notFound();
+  //   }
 
-  const relatedIds = finalProduct.related_ids.map((pId: any) => pId).join(",");
+  // Fetch main product data
+  const productArray: any = await ProductServices.getProductBySlug(slug);
+  const product = productArray[0];
+
+  const relatedIds = product.related_ids.map((pId: any) => pId).join(",");
   const relatedItems = await ProductServices.getProductBySpecificIds(
     relatedIds
   );
 
-  const categoryId = finalProduct.categories?.[0]?.id;
-  let relatedProducts: any = [];
+    // console.log('product by slug', product);
 
-  if (categoryId) {
-    relatedProducts = await ProductServices.getRelatedProducts(
-      categoryId,
-      finalProduct.id
-    );
+  let variations: any[] = [];
+  if (product.type === "variable" && product.variations.length > 0) {
+    // Fetch all available variations for a variable product
+    // variations = await fetchProductVariations(product.id);
+    variations = await ProductServices.getProductVariations(product.id);
   }
 
-  const discount = product.sale_price
-    ? `${Math.round(
-        (1 -
-          parseFloat(product.sale_price) / parseFloat(product.regular_price)) *
-          100
-      )}% OFF`
-    : null;
+  // --- Grouped Product Handling ---
+  // If it's a grouped product, you might also fetch the child products here
+  // based on an array of child product IDs often found in the main product object.
+  // For simplicity, this example focuses on Simple/Variable products.
 
   return (
-    <>
-      {/*  bredcrumbs starts here */}
+    <div className="container mx-auto py-12">
+        {/*  bredcrumbs starts here */}
       <div className="container mx-auto">
-        <div className="flex items-center gap-2 mt-4">
+        <div className="flex items-center gap-2 mt-0 mb-4">
           <Link
             href="/"
             className="text-gray-600 hover:text-gray-800 text-sm font-medium"
@@ -68,8 +66,7 @@ export default async function Page({
           </Link>
         </div>
       </div>
-      {/* breadcrumbs ends here */}
-      <ProductDetail product={finalProduct} discount={discount} />
+      <ProductClient product={product} variations={variations} />
       <div className="container mx-auto related-products-product-page-wr mt-4">
         <ProductTabber
           productsByTab={{
@@ -79,6 +76,13 @@ export default async function Page({
           tabs={["Related Products"]}
         />
       </div>
-    </>
+    </div>
   );
 }
+
+// Optional: Generate static paths if using static generation
+// export async function generateStaticParams() {
+//   // Fetch list of all product slugs from API
+//   const slugs = ['123', '456']; // Example slugs/IDs
+//   return slugs.map((slug) => ({ slug }));
+// }

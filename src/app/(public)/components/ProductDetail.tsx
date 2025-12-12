@@ -13,10 +13,10 @@ import toast, { Toaster } from "react-hot-toast";
 import Image from "next/image";
 import { ProductVariation, Variation } from "@/types/products";
 import WishlistButton from "@/components/WishlistButton";
-import ProductImageSwiper from "../product/[slug]/SwiperSlider";
+import ProductImageSwiper from "../product-old/[slug]/SwiperSlider";
 import ProductShareButton from "@/components/ShareButton";
 import ProductReviews from "@/components/ProductReviews";
-import ZipCodeChecker from "../product/ZipcodeChecker";
+import ZipCodeChecker from "../product-old/ZipcodeChecker";
 
 type Props = {
   product: ProductVariation;

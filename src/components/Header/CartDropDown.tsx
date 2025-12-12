@@ -36,7 +36,7 @@ export default function CartDropdown() {
       // const cartItems = await ProductServices.getProductBySpecificIds(ids);
 
       const items: any = [];
-      for (const item of cart) {
+      for (const item of cart) { 
         try {
           const data = item.variationId
             ? await ProductServices.getProductVariationBySpecificId(item.id, item.variationId)

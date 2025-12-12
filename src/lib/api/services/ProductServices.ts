@@ -48,6 +48,10 @@ const ProductServices = {
     return requests.get<Product>(`/wc/v3/products/${productId}`);
   },
 
+  getProductVariations: async (productId: number): Promise<any> => {
+    return requests.get<any>(`/wc/v3/products/${productId}/variations?per_page=100`);
+  },
+
   getProductBySpecificIds: async (productIds: string): Promise<Product[]> => {
     return requests.get<Product[]>(`/wc/v3/products/?include=${productIds}`);
   },
