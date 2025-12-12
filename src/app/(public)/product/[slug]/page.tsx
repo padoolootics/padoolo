@@ -4,7 +4,7 @@ import { Product, ProductVariation } from "../types/woocommerce";
 import ProductClient from "./ProductClient";
 import ProductServices from "@/lib/api/services/ProductServices";
 import ProductTabber from "../../components/Tabber";
-import Link from "next/link";
+import Link from 'next/link';
 
 // type Props = {
 //   params: { slug: string };
