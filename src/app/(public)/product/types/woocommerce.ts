@@ -48,6 +48,7 @@ export type Product = PriceDetails & {
   type: 'simple' | 'variable' | 'grouped' | 'external';
   description: string;
   sku: string;
+  brands: string[];
   categories: string[];
   tags: string[];
   short_description: string;

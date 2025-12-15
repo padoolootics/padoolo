@@ -65,9 +65,7 @@ const Grid2x2Slide: React.FC<Grid2x2SlideProps> = ({ products }) => {
               {/* Star Rating with yellow square boxes */}
 
               {/* Product Info */}
-              <div className="text-lg font-medium text-black cursor-pointer truncate md:overflow-visible md:whitespace-normal">
-                {product.name}
-              </div>
+              <div className="text-lg font-medium text-black cursor-pointer truncate md:overflow-visible md:whitespace-normal" dangerouslySetInnerHTML={{ __html: product.name }} />
 
               {/* Price Info */}
               <div className="text-sm">

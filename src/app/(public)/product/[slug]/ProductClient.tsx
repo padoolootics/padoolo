@@ -42,7 +42,7 @@ export default function ProductClient({
   const { addToCart, cart, loading } = useCartContext();
   const [activeTab, setActiveTab] = useState(0);
 
-  // console.log("variations", variations);
+  // console.log("product", product);
   // console.log("activeVariation", activeVariation);
 
   const productStock: number =
@@ -124,13 +124,13 @@ export default function ProductClient({
       return (
         <div className="text-xl font-bold text-black-600">
           <span className="line-through text-gray-400 text-base mr-2">
-            ${regPrice}
+            €{Number(regPrice).toFixed(2)}
           </span>
-          ${salePrice}
+          €{Number(salePrice).toFixed(2)}
         </div>
       );
     }
-    return <div className="text-2xl font-bold text-gray-800">${price}</div>;
+    return <div className="text-2xl font-bold text-gray-800">€{Number(price).toFixed(2)}</div>;
   };
 
   useEffect(() => {
@@ -345,7 +345,10 @@ export default function ProductClient({
 
         {/* 2. Product Details (Right Side) */}
         <div className="space-y-6">
-          <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
+          <h1
+            className="text-3xl font-semibold mb-2"
+            dangerouslySetInnerHTML={{ __html: product.name }}
+          />
 
           {/* Short Description */}
           {product.short_description && (
@@ -506,8 +509,16 @@ export default function ProductClient({
             </div>
           </div>
 
-          {/* SKU Tags Categories Name display section */}
+          {/* SKU Tags Categories brands Name display section */}
           <div className="text-sm text-gray-500 mt-[23px] border-b border-[#BDBDBD] pb-5 space-y-1">
+            {product.brands.length > 0 ? (
+              <p>
+                <strong>Brands:</strong>{" "}
+                {product.brands.map((c: any) => c.name).join(", ")}
+              </p>
+            ) : (
+              ""
+            )}
             {product.sku ? (
               <p>
                 <strong>SKU:</strong> {product.sku}

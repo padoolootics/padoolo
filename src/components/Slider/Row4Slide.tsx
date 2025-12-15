@@ -42,7 +42,7 @@ const Row4Slide: React.FC<Row4SlideProps> = ({ product }) => {
           />
 
           {/* Product Name */}
-          <div className="mt-2 text-sm font-medium">{product.name}</div>
+          <div className="mt-2 text-sm font-medium" dangerouslySetInnerHTML={{ __html: product.name }} />
 
           {/* Price */}
           <div className="text-sm mt-1">

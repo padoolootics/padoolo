@@ -74,9 +74,8 @@ const ProductSlide: React.FC<Props> = ({ product }) => {
           ))}
         </div>
 
-        <div className="text-sm text-left text-[18px] font-semibold mt-2">
-          {product.name}
-        </div>
+        <div className="text-sm text-left text-[18px] font-semibold mt-2" dangerouslySetInnerHTML={{ __html: product.name }} />
+        
         {/* Price Info */}
         <div className="text-sm text-left text-[16px] font-[400] mt-1">
           {hasDiscount ? (

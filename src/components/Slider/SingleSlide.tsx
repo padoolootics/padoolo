@@ -57,7 +57,7 @@ const SingleSlide: React.FC<SingleSlideProps> = ({ product }) => {
         </figure>
 
         {/* Product Name */}
-        <h3 className="text-lg font-medium text-black">{product.name}</h3>
+        <h3 className="text-lg font-medium text-black" dangerouslySetInnerHTML={{ __html: product.name }} />
 
         {/* Price Info */}
         <div className="text-sm mt-1">
