@@ -51,35 +51,44 @@ export default async function Home() {
   let watchRawProducts: any = null;
 
   try {
-    // Fetch page data
     pageData = await PageServices.getPageBySlug("home-page");
 
-    // Fetch products by categories
-    spotlightRawProducts = await ProductServices.getProductsByCategory(
-      pageData?.acf?.spotlight_deals
-    );
-    newArrivalsRawProducts = await ProductServices.getProductsByCategory(
-      pageData?.acf?.new_arrivals
-    );
-    sunglassesRawProducts = await ProductServices.getProductsByCategory(
-      pageData?.acf?.sunglasses_category_id
-    );
-    eyeglassesRawProducts = await ProductServices.getProductsByCategory(
-      pageData?.acf?.eyeglasses_category_id
-    );
-    latestRawProducts = await ProductServices.getProductsByCategory(
-      pageData?.acf?.latest_products_category_id
-    );
-    bestsellersRawProducts = await ProductServices.getProductsByCategory(
-      pageData?.acf?.bestsellers_category_id
-    );
-    watchRawProducts = await ProductServices.getProductsByCategory(
-      pageData?.acf?.watch_category_id
-    );
+    const [
+      spotlight,
+      newArrivals,
+      sunglasses,
+      eyeglasses,
+      latest,
+      bestsellers,
+      watch,
+    ] = await Promise.all([
+      ProductServices.getProductsByCategory(pageData?.acf?.spotlight_deals),
+      ProductServices.getProductsByCategory(pageData?.acf?.new_arrivals),
+      ProductServices.getProductsByCategory(
+        pageData?.acf?.sunglasses_category_id
+      ),
+      ProductServices.getProductsByCategory(
+        pageData?.acf?.eyeglasses_category_id
+      ),
+      ProductServices.getProductsByCategory(
+        pageData?.acf?.latest_products_category_id
+      ),
+      ProductServices.getProductsByCategory(
+        pageData?.acf?.bestsellers_category_id
+      ),
+      ProductServices.getProductsByCategory(pageData?.acf?.watch_category_id),
+    ]);
+
+    spotlightRawProducts = spotlight;
+    newArrivalsRawProducts = newArrivals;
+    sunglassesRawProducts = sunglasses;
+    eyeglassesRawProducts = eyeglasses;
+    latestRawProducts = latest;
+    bestsellersRawProducts = bestsellers;
+    watchRawProducts = watch;
   } catch (error) {
     console.error("Error fetching data:", error);
-    // Optionally, provide fallback values or handle error appropriately
-    pageData = { acf: {} }; // Example fallback
+    pageData = { acf: {} };
     spotlightRawProducts = [];
     newArrivalsRawProducts = [];
     sunglassesRawProducts = [];

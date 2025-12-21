@@ -33,6 +33,7 @@ import { useAuth } from "@/lib/Contexts/AuthContext";
 import MegaMenu from "./MegaMenu";
 import SearchFilter from "./SearchFilter";
 import { usePathname } from "next/navigation";
+import hfSettingServices from "@/lib/api/services/headerFooterSettings";
 
 const products = [
   {
@@ -71,9 +72,31 @@ const callsToAction = [
   { name: "Contact sales", href: "#", icon: PhoneIcon },
 ];
 
+export const FALLBACK_HEADER_MENU = [
+  { label: 'Home', url: '/', target: '_self' },
+  { label: 'Sunglasses', url: '/sunglasses', target: '_self' },
+  { label: 'New Arrivals', url: '/new-arrivals', target: '_self' },
+  { label: 'Clothing', url: '/clothing', target: '_self' },
+  { label: 'Eyeglasses', url: '/eyeglasses', target: '_self' },
+  { label: 'Spotlight Deals', url: '/spotlight-deals', target: '_self' },
+];
+
 export default function MainNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated } = useAuth();
+  const [menu, setMenu] = useState<any[]>(FALLBACK_HEADER_MENU);
+  const [logo, setLogo] = useState<string>();
+
+  useEffect(() => {
+    hfSettingServices.getHFSettings().then((data) => {
+      if (data?.header_menu?.length) {
+        setMenu(data.header_menu);
+        setLogo(data.site_logo ? data.site_logo : '/padoolo1.png' );
+      }
+    });
+  }, []);
+
+  // console.log('hfSettings', hfSettings);
   
   const pathName = usePathname();
 
@@ -95,7 +118,7 @@ export default function MainNav() {
               <Link href="/" className="-m-1.5 p-1.5 flex items-center">
                 <Image
                   alt="Padoolo Logo"
-                  src="/padoolo1.png"
+                  src={logo ? logo : '/padoolo1.png'}
                   className="h-auto w-20"
                   width={96}
                   height={62}
@@ -174,7 +197,7 @@ export default function MainNav() {
               <Link href="/" className="-m-1.5 p-1.5 flex items-center">
                 <Image
                   alt="Padoolo Logo"
-                  src="/padoolo1.png"
+                  src={logo ? logo : '/padoolo1.png'}
                   className="w-14 h-14"
                   width={50}
                   height={50}
@@ -189,40 +212,23 @@ export default function MainNav() {
             </div>
 
             <div className="mt-6 space-y-4 flex flex-col">
-              {/*<Disclosure>
-                {({ open }) => (
-                  <>
-                    <DisclosureButton className="flex w-full items-center justify-between rounded-md py-2 px-3 text-base font-semibold text-gray-900 hover:bg-gray-50">
-                      Products
-                      <ChevronDownIcon
-                        className={`h-5 w-5 transform ${open ? "rotate-180" : ""}`}
-                      />
-                    </DisclosureButton>
-                    <DisclosurePanel className="space-y-2 px-3">
-                      {[...products, ...callsToAction].map((item) => (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          className="block text-sm font-medium text-gray-700 hover:underline"
-                        >
-                          {item.name}
-                        </a>
-                      ))}
-                    </DisclosurePanel>
-                  </>
-                )}
-              </Disclosure>*/}
-              <Link
+              {menu.map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.url}
+                        prefetch
+                        className="text-base font-medium text-gray-900"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+              {/* <Link
                 href="/"
                 prefetch={true}
                 className="text-base font-medium text-gray-900"
               >
                 Home
               </Link>
-
-                                        {/* {categories.map((category) => (
-                                  <HoverPopover key={category} label={category} />
-                                ))} */}
 
               <Link
                 href="/sunglasses"
@@ -258,7 +264,7 @@ export default function MainNav() {
                 prefetch={true}
               >
                 Spotlight Deals
-              </Link>
+              </Link> */}
             </div>
 
             <div className="mt-6 border-t border-gray-200 pt-4 space-y-4">

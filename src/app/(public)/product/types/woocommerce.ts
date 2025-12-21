@@ -40,6 +40,12 @@ export type ProductVariation = {
   stock_quantity: number | null;
 };
 
+type MetaItem = {
+  id: number;
+  key: string;
+  value: string;
+};
+
 // --- Core Product Type ---
 export type Product = PriceDetails & {
   id: number;
@@ -59,6 +65,7 @@ export type Product = PriceDetails & {
   purchasable: boolean;
   variations: number[]; // IDs of variations (only for variable products)
   parent_id: number; // Only for grouped/variation products
+  meta_data: MetaItem[];
 };
 
 // Utility type for handling variation selection state

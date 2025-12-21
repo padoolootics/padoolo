@@ -29,6 +29,16 @@ type ProductClientProps = {
   variations: ProductVariation[];
 };
 
+type MetaItem = {
+  id: number;
+  key: string;
+  value: string;
+};
+
+interface ProductMetaProps {
+  metaData: MetaItem[];
+}
+
 export default function ProductClient({
   product,
   variations,
@@ -64,10 +74,10 @@ export default function ProductClient({
 
   const tabs = [
     { label: "Product Description", content: product.description },
-    {
-      label: "Additional information",
-      content: "No additional information yet.",
-    },
+    // {
+    //   label: "Additional information",
+    //   content: "No additional information yet.",
+    // },
     {
       label: "Reviews",
       content: <ProductReviews productId={product.id} />,
@@ -174,10 +184,67 @@ export default function ProductClient({
           isInstock ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
         }`}
       >
-        {isInstock ? "In Stock" : "Out of Stock"}
+        {isInstock ? ( product.stock_quantity == null ? '' : product.stock_quantity ) + " In Stock" : "Out of Stock"}
       </span>
     );
   };
+
+  const metaLabelMap: Record<string, string> = {
+  // _sw_retailer_id: "Retailer ID",
+  // _sw_retailer_product_id: "Retailer Product ID",
+  _sw_condition_slug: "Condition",
+  _sw_gender_slug: "Gender",
+  _sw_location: "Location",
+  // _sw_cost_per_item: "Cost per Item",
+};
+
+const formatValue = (key: string, value: string) => {
+  if (key === "_sw_condition_slug") {
+    return value.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  if (key === "_sw_gender_slug") {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
+  return value;
+};
+
+const metaOrder = [
+  "_sw_condition_slug",
+  "_sw_gender_slug",
+  "_sw_location",
+];
+
+  // --- meta data component
+const ProductMeta = () => {
+  if (!product?.meta_data?.length) return null;
+
+  return (
+    <div className="mt-6 bg-white">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {metaOrder.map((key) => {
+          const item = product.meta_data.find(
+            (meta) => meta.key === key
+          );
+
+          if (!item) return null;
+
+          return (
+            <div key={item.id} className="flex flex-col">
+              <span className="text-lg text-gray-900 font-medium">
+                {metaLabelMap[item.key]}
+              </span>
+              <span className="text-sm font-normal text-gray-800 mt-1">
+                {formatValue(item.key, item.value)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
   const VariationSelectors = () => {
     const variationAttributes = (product.attributes ?? []).filter(
@@ -243,16 +310,16 @@ export default function ProductClient({
     if (visibleAttributes.length === 0) return null;
 
     return (
-      <div className="mt-6 pt-4">
-        <h3 className="text-base font-semibold mb-3">Product Details</h3>
-        <ul className="list-none space-y-1">
+      <div className="mt-0 pt-0">
+        {/* <h3 className="text-base font-semibold mb-3">Product Details</h3> */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibleAttributes.map((attr) => (
-            <li key={attr.id} className="text-gray-600">
-              <span className="font-semibold text-gray-800">{attr.name}:</span>{" "}
-              {(attr.options ?? []).join(", ")}
-            </li>
+            <div key={attr.id} className="flex flex-col">
+              <span className="text-lg text-gray-900 font-medium">{attr.name}</span>{" "}
+              <span className="text-sm font-normal text-gray-800 mt-1">{(attr.options ?? []).join(", ")}</span>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     );
   };
@@ -345,10 +412,39 @@ export default function ProductClient({
 
         {/* 2. Product Details (Right Side) */}
         <div className="space-y-6">
+          <div className="text-sm text-gray-500 mt-[23px] space-y-1">
+            {product.categories.length > 0 ? (
+              <p>
+                {product.categories.map((c: any, i:any) => <span key={i} className="px-2 py-1 bg-gray-100 rounded-sm mr-2">{c.name}</span>)}
+              </p>
+            ) : (
+              ""
+            )}
+          </div>
+          <div className="text-sm text-gray-500 mb-2">
+            {product.brands.length > 0 ? (
+              <p className="text-2xl font-semibold text-gray-900">
+                {product.brands.map((c: any) => c.name).join(", ")}
+              </p>
+            ) : (
+              ""
+            )}
+          </div>
           <h1
-            className="text-3xl font-semibold mb-2"
+            className="text-xl font-semibold mb-2"
             dangerouslySetInnerHTML={{ __html: product.name }}
           />
+
+          {/* SKU */}
+          <p>
+            {product.sku ? (
+              <p className="text-gray-400">
+                SKU: {product.sku}
+              </p>
+            ) : (
+              ""
+            )}
+          </p>
 
           {/* Short Description */}
           {product.short_description && (
@@ -358,7 +454,7 @@ export default function ProductClient({
             />
           )}
           {/* Stars and Reviews Section */}
-          <div className="flex items-center justify-start gap-2 mb-3">
+          <div className="flex items-center justify-start gap-2 mb-3 hidden ">
             <div className="flex items-center gap-1 justify-start ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -433,11 +529,16 @@ export default function ProductClient({
             <StockStatusBadge />
           </div>
 
+          {/* Showing Meta Data */}
+          <ProductMeta />
+
           {/* Variation Selector (for variable product) */}
           {product.type === "variable" && <VariationSelectors />}
 
           {/* Simple Product Attributes */}
           {product.type === "simple" && <SimpleProductAttributes />}
+
+          
 
           {/* Add to Cart/Action, Qualtity, share wishlist Button */}
           <div className="border-t border-[#BDBDBD] pt-6 flex items-center gap-3 mb-4">
@@ -510,7 +611,7 @@ export default function ProductClient({
           </div>
 
           {/* SKU Tags Categories brands Name display section */}
-          <div className="text-sm text-gray-500 mt-[23px] border-b border-[#BDBDBD] pb-5 space-y-1">
+          <div className="text-sm text-gray-500 mt-[23px] border-b border-[#BDBDBD] pb-5 space-y-1 hidden">
             {product.brands.length > 0 ? (
               <p>
                 <strong>Brands:</strong>{" "}

@@ -1,136 +1,205 @@
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import hfSettingServices from "@/lib/api/services/headerFooterSettings";
+
+/* ---------------------------------
+   FALLBACK DATA (API-COMPATIBLE)
+---------------------------------- */
+
+const fallbackFooterMenus = {
+  menu_1: {
+    title: "COMPANY INFO",
+    items: [
+      { label: "About Us", url: "/about", target: "_self" },
+      { label: "Contact Us", url: "/contact", target: "_self" },
+      { label: "My Account", url: "/dashboard", target: "_self" },
+      { label: "Shop", url: "/shop", target: "_self" },
+    ],
+  },
+  menu_2: {
+    title: "SUPPORT",
+    items: [
+      { label: "Order Status", url: "/", target: "_self" },
+      { label: "Shopping Support", url: "/", target: "_self" },
+      {
+        label: "Shipping & Returns Policy",
+        url: "/shipping-and-returns-policy",
+        target: "_self",
+      },
+    ],
+  },
+  menu_3: {
+    title: "SHOP BY",
+    items: [
+      { label: "Sunglasses", url: "/sunglasses", target: "_self" },
+      { label: "Clothes", url: "/clothing", target: "_self" },
+      { label: "New Arrival", url: "/new-arrivals", target: "_self" },
+      { label: "Spotlight Deals", url: "/spotlight-deals", target: "_self" },
+    ],
+  },
+  menu_4: {
+    title: "MORE INFO",
+    items: [
+      { label: "FAQs", url: "/faqs", target: "_self" },
+      { label: "Terms & Conditions", url: "/terms-and-conditions", target: "_self" },
+    ],
+  },
+};
+
+const fallbackFooter = {
+  footer_logo: "/padoolo1.png",
+  footer_menus: fallbackFooterMenus,
+  social_links: [],
+  icon_boxes: [],
+  footer_copyright:
+    "Copyright ©2026 Padoolo. All Rights Reserved.",
+};
+
+const socialIconMap: Record<string, string> = {
+  facebook: "fab fa-facebook-f",
+  instagram: "fab fa-instagram",
+  twitter: "fab fa-x-twitter",
+  x: "fab fa-x-twitter",
+  linkedin: "fab fa-linkedin-in",
+  youtube: "fab fa-youtube",
+};
+
+/* ---------------------------------
+   FOOTER COMPONENT
+---------------------------------- */
 
 const Footer: React.FC = () => {
-    return (
-        <footer className="bg-white text-slate-800 text-sm">
-            <div className="border-b">
-                <div className="container m-auto">
-                    {/* Top Icons Section */}
-                    <div className="py-4 px-4 md:px-6 flex flex-wrap justify-between items-center gap-6">
-                        <div className="flex items-center gap-4">
-                            <Image src="/footer/free-delivery.png" alt="Free Shipping" width={60} height={60} />
-                            <div>
-                                <p className="font-semibold text-lg">Free Shipping</p>
-                                <p className="text-xs font-normal text-slate-600">Free Shipping for orders above 499</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Image src="/footer/guarantee.png" alt="Money Guarantee" width={60} height={60} />
-                            <div>
-                                <p className="font-semibold text-lg">Money Guarantee</p>
-                                <p className="text-xs font-normal text-slate-600">within 30 days</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Image src="/footer/customer-service.png" alt="Online Support" width={60} height={60} />
-                            <div>
-                                <p className="font-semibold text-lg">Online Support</p>
-                                <p className="text-xs font-normal text-slate-600">24 hours a day, 7 days a week</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Image src="/footer/credit-cards.png" alt="Flexible Payment" width={60} height={60} />
-                            <div>
-                                <p className="font-semibold text-lg">Flexible Payment</p>
-                                <p className="text-xs font-normal text-slate-600">Pay with Multiple Credit Cards</p>
-                            </div>
-                        </div>
-                    </div>
+  const [footer, setFooter] = useState<any>(fallbackFooter);
+
+  useEffect(() => {
+    hfSettingServices
+      .getHFSettings()
+      .then((data) => {
+        if (data?.footer) {
+          setFooter({
+            footer_logo: data.footer.footer_logo || fallbackFooter.footer_logo,
+            footer_menus: data.footer.footer_menus || fallbackFooter.footer_menus,
+            social_links: data.footer.social_links || [],
+            icon_boxes: data.footer.icon_boxes || [],
+            footer_copyright:
+              data.footer.footer_copyright ||
+              fallbackFooter.footer_copyright,
+          });
+        }
+      })
+      .catch(() => setFooter(fallbackFooter));
+  }, []);
+
+  const menus = footer.footer_menus;
+
+  return (
+    <footer className="bg-white text-slate-800 text-sm">
+
+      {/* ---------------- TOP ICON BOXES (DYNAMIC) ---------------- */}
+      <div className="border-b">
+        <div className="container m-auto">
+          <div className="py-4 px-4 md:px-6 flex flex-wrap justify-between items-center gap-6">
+            {(footer.icon_boxes.length
+              ? footer.icon_boxes
+              : []
+            ).map((item: any, i: number) => (
+              <div key={i} className="flex items-center gap-4">
+                <Image
+                  src={item.url}
+                  alt={item.label}
+                  width={60}
+                  height={60}
+                />
+                <div>
+                  <p className="font-semibold text-lg">{item.label}</p>
+                  <p className="text-xs text-slate-600">{item.text}</p>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ---------------- FOOTER MENUS ---------------- */}
+      <div className="border-b">
+        <div className="container m-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-5 gap-6 px-4 md:px-6 py-14">
+            {Object.values(menus).map((menu: any, idx: number) => (
+              <div key={idx}>
+                <h4 className="font-semibold mb-4">{menu.title}</h4>
+                <ul className="space-y-4 text-slate-600 text-sm">
+                  {menu.items.map((item: any, i: number) => (
+                    <li key={i}>
+                      <Link href={item.url} target={item.target}>
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            {/* ---------------- NEWSLETTER ---------------- */}
+            <div className="w-full md:w-[280px] text-center md:text-left">
+              <Image
+                src={footer.footer_logo}
+                alt="Padoolo Logo"
+                width={100}
+                height={40}
+                className="mb-4 mx-auto md:mx-0"
+              />
+
+              <h4 className="font-semibold mb-2">SIGN UP FOR EMAIL</h4>
+              <p className="text-xs text-slate-600 mb-3">
+                Enjoy 15% your first order when you signup to our newsletter.
+              </p>
+
+              <div className="flex mb-4">
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  className="w-2/3 px-3 py-2 border rounded-l text-sm"
+                />
+                <button className="bg-amber-500 text-white px-4 rounded-r">
+                  SIGN UP
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Middle Link Sections */}
-            <div className="border-b">
-                <div className="container m-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 md:px-6 py-14">
-                        <div>
-                            <h4 className="font-semibold mb-4">COMPANY INFO</h4>
-                            <ul className="space-y-4 text-slate-600 text-base">
-                                <li><Link href="/about">About Us</Link></li>
-                                <li><Link href="/contact">Contact Us</Link></li>
-                                <li><Link href="/dashboard">My Account</Link></li>
-                                <li><Link href="/shop">Shop</Link></li>
-                            </ul>
-                        </div>
+      {/* ---------------- BOTTOM ---------------- */}
+      <div className="container m-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-6 py-6 text-slate-500">
+          <p>{footer.footer_copyright}</p>
 
-                        <div>
-                            <h4 className="font-semibold mb-4">SUPPORT</h4>
-                            <ul className="space-y-4 text-slate-600 text-base">
-                                <li><Link href="/">Order Status</Link></li>
-                                <li><Link href="/">Shopping Support</Link></li>
-                                <li><Link href="/shipping-and-returns-policy">Shipping & Returns Policy</Link></li>
-                            </ul>
-                        </div>
+          {/* SOCIAL ICONS */}
+          <div className="flex space-x-3 text-xl text-slate-600">
+            {footer.social_links.map((item: any, i: number) => {
+              const iconClass =
+                socialIconMap[item.label.toLowerCase()] || "fas fa-globe";
 
-                        <div>
-                            <h4 className="font-semibold mb-4">SHOP BY</h4>
-                            <ul className="space-y-4 text-slate-600 text-base">
-                                <li><Link href="/sunglasses">Sunglasses</Link></li>
-                                <li><Link href="/clothing">Clothes</Link></li>
-                                <li><Link href="/new-arrivals">New Arrival</Link></li>
-                                <li><Link href="/spotlight-deals">Spotlight Deals</Link></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="font-semibold mb-4">MORE INFO</h4>
-                            <ul className="space-y-4 text-slate-600 text-base">
-                                <li><Link href="/faqs">FAQs</Link></li>
-                                {/* <li><Link href="/">Customer Service</Link></li> */}
-                                {/* <li><Link href="/">Manufactures</Link></li> */}
-                                <li><Link href="/terms-and-conditions">Terms & Conditions</Link></li>
-                            </ul>
-                        </div>
-
-                        {/* Sign Up and Social */}
-                        
-
-
-                        <div className="w-full md:w-[280px] text-center md:text-left">
-                            <div className="mb-4">
-                                <Image src="/padoolo1.png" alt="Logo" width={100} height={40} className="mb-4 mx-auto md:mx-0" />
-                                
-                                <h4 className="font-semibold mb-2">SIGN UP FOR EMAIL</h4>
-                                <p className="text-xs text-slate-600 mb-3">
-                                Enjoy 15% your first order when you signup to our newsletter.
-                                </p>
-                                <div className="flex">
-                                    <input
-                                        type="email"
-                                        placeholder="Your email address"
-                                        className="w-2/3 px-3 py-2 border border-gray-300 rounded-l text-sm focus:outline-none"
-                                    />
-                                    <button className="bg-amber-500 text-white px-4 rounded-r flex items-center">SIGN UP</button>
-                                </div>
-                            </div>
-
-                            <div className="mt-4 flex flex-col items-center md:flex-row md:items-start">
-                                <p className="font-semibold mb-0 md:mr-4">FOLLOW US:</p>
-                                <div className="flex space-x-3 text-xl text-slate-600">
-                                    <a href="#"><i className="fab fa-facebook-f"></i></a>
-                                    <a href="#"><i className="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Bottom Section */}
-            <div className="container m-auto">
-                <div className="flex flex-col md:flex-row justify-between items-center text-base px-4 md:px-6 py-6 text-slate-500">
-                    <p className='text-center md:text-left'>Copyright ©2025 Padoolo. All Rights Reserved.</p>
-                    <div className="flex space-x-4 mt-2 md:mt-0">
-                        {/* <a href="#">Blog</a> */}
-                        <a href="/privacy-policy">Privacy & Policy</a>
-                        <a href="/terms-and-conditions">Terms of Use</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
+              return (
+                <a
+                  key={i}
+                  href={item.url}
+                  target={item.target}
+                  rel="noopener noreferrer"
+                  aria-label={item.label}
+                >
+                  <i className={iconClass}></i>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;
