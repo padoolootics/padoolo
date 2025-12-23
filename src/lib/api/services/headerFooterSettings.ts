@@ -32,9 +32,14 @@ export interface HFFooter {
   icon_boxes: IconBoxContent[];
 }
 
+type MarqueItem = {
+  label: string;
+};
+
 export interface HFSettings {
   site_logo: string;
   header_menu: HFMenuItem[];
+  marque: MarqueItem;
   footer: HFFooter;
 }
 

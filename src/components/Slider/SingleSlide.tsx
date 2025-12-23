@@ -56,6 +56,16 @@ const SingleSlide: React.FC<SingleSlideProps> = ({ product }) => {
           />
         </figure>
 
+        <div className="text-sm text-gray-500 mb-2 text-center mt-4">
+            {product.brands.length > 0 ? (
+              <p className="text-base font-semibold text-gray-500">
+                {product.brands.map((c: any) => c.name).join(", ")}
+              </p>
+            ) : (
+              ""
+            )}
+          </div>
+
         {/* Product Name */}
         <h3 className="text-lg font-medium text-black" dangerouslySetInnerHTML={{ __html: product.name }} />
 

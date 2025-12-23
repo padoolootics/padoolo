@@ -11,7 +11,8 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const { id, name, image, images, price, is_variable, price_range, slug } = product;
+  const { id, name, image, images, price, is_variable, price_range, slug } =
+    product;
   const rating = product.rating || 0;
   return (
     <div className="relative bg-white border border-gray-200 rounded cursor-pointer group transition overflow-hidden">
@@ -33,7 +34,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Star Rating with yellow square boxes */}
-        <div className="flex  gap-1 m-2 mb-0 ">
+        {/* <div className="flex  gap-1 m-2 mb-0 ">
           {Array.from({ length: 5 }, (_, i) => (
             <div
               key={i}
@@ -46,18 +47,28 @@ const ProductCard = ({ product }: ProductCardProps) => {
               ★
             </div>
           ))}
+        </div> */}
+
+        <div className="text-sm text-gray-500 mb-2 text-center mt-4">
+          {product.brands.length > 0 ? (
+            <p className="text-base font-semibold text-gray-500">
+              {product.brands.map((c: any) => c.name).join(", ")}
+            </p>
+          ) : (
+            ""
+          )}
         </div>
 
         {/* Info Section */}
         <div className="p-3">
           {/* Product Name */}
-          <h3 className="text-base font-medium text-gray-700 truncate mb-1">
+          <h3 className="text-base text-center font-medium text-gray-700 truncate mb-1">
             {name}
           </h3>
 
           {/* Pricing */}
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-500 font-medium text-sm">
+          <div className="flex items-center space-x-2 justify-center">
+            <span className="text-gray-500 font-medium text-base ">
               €{is_variable ? price_range.min + "-" + price_range.max : price}
             </span>
           </div>

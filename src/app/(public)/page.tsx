@@ -98,6 +98,8 @@ export default async function Home() {
     watchRawProducts = [];
   }
 
+  // console.log('spotlightRawProducts', spotlightRawProducts);
+
   return (
     <div>
       {/* Hero Slider */}

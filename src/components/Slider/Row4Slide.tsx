@@ -41,6 +41,16 @@ const Row4Slide: React.FC<Row4SlideProps> = ({ product }) => {
             height={300}
           />
 
+          <div className="text-sm text-gray-500 mb-2">
+                  {product.brands.length > 0 ? (
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {product.brands.map((c: any) => c.name).join(", ")}
+                    </p>
+                  ) : (
+                    ""
+                  )}
+                </div>
+
           {/* Product Name */}
           <div className="mt-2 text-sm font-medium" dangerouslySetInnerHTML={{ __html: product.name }} />
 
