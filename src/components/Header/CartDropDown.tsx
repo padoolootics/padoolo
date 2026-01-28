@@ -46,20 +46,26 @@ export default function CartDropdown() {
           // If data is an array, take the first product; otherwise, use data directly
           // const product = Array.isArray(data) ? data[0] : data;
 
-          if (data) {
-            items.push({
-              id: item.id,
-              variantName: data.name,
-              name: item.name,
-              category: "",
-              price: Number(data.price),
-              images: item.variationId ? data.image.src : data.images[0].src,
-              quantity: item.quantity,
-              variationId: item.variationId,
-            });
+          if (!data) {
+            // Product no longer exists – remove it from cart state/source
+            removeFromCart(item.id, item.variationId);
+            continue;
           }
+
+          items.push({
+            id: item.id,
+            variantName: data.name,
+            name: item.name,
+            category: "",
+            price: Number(data.price),
+            images: item.variationId ? data.image.src : data.images[0].src,
+            quantity: item.quantity,
+            variationId: item.variationId,
+          });
         } catch (err) {
           console.error(`Error fetching product ${item.id}:`, err);
+          // On fetch error (e.g. 404), also remove the broken item from cart
+          removeFromCart(item.id, item.variationId);
         }
       }
 
@@ -67,7 +73,7 @@ export default function CartDropdown() {
     };
 
     fetchCartItems();
-  }, [cart, setCartProducts]);
+  }, [cart, setCartProducts, removeFromCart]);
 
   const renderProduct = (item: Product, index: number, close: () => void) => {
     const { name, price, images, variantName } = item;
