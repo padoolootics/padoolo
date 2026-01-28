@@ -147,8 +147,8 @@ const Footer: React.FC = () => {
               <Image
                 src={footer.footer_logo}
                 alt="Padoolo Logo"
-                width={100}
-                height={40}
+                width={180}
+                height={62}
                 className="mb-4 mx-auto md:mx-0"
               />
 
