@@ -8,26 +8,67 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Image from 'next/image';
 
-const sliderItems = [
-  { title: 'Running', image: '/images/running.png' },
-  { title: 'Mountain Bike', image: '/images/mountain-bike.png' },
-  { title: 'Swimming', image: '/images/swimming.png' },
-  { title: 'Driving', image: '/images/driving.png' },
-  { title: 'Mountain Bike', image: '/images/mountain-bike.png' },
-];
+type AcfImage = {
+  url?: string;
+  alt?: string;
+  title?: string;
+  sizes?: Record<string, string>;
+};
 
-export default function EyewearSlider() {
+type Sec3Item = {
+  title?: string;
+  image?: AcfImage;
+};
+
+type HomeAcf = {
+  sec3_heading?: string;
+  sec3_slider_content?: Sec3Item[];
+};
+
+export default function EyewearSlider({ acf }: { acf?: HomeAcf }) {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+
+  const heading = acf?.sec3_heading || 'EYEWEAR FOR ANY ACTIVITY';
+  const [leftHeading, ...restHeading] = heading.split(' ');
+  const rightHeading = restHeading.join(' ');
+
+  const sliderItems: { title: string; image: string; alt: string }[] =
+    acf?.sec3_slider_content?.length
+      ? acf.sec3_slider_content.map((item) => {
+          const img =
+            item?.image?.sizes?.large ||
+            item?.image?.sizes?.medium_large ||
+            item?.image?.url ||
+            '/images/running.png';
+          return {
+            title: item?.title || item?.image?.title || '',
+            image: img,
+            alt: item?.image?.alt || item?.title || item?.image?.title || 'Slide',
+          };
+        })
+      : [
+          { title: 'Running', image: '/images/running.png', alt: 'Running' },
+          { title: 'Mountain Bike', image: '/images/mountain-bike.png', alt: 'Mountain Bike' },
+          { title: 'Swimming', image: '/images/swimming.png', alt: 'Swimming' },
+          { title: 'Driving', image: '/images/driving.png', alt: 'Driving' },
+        ];
 
   return (
     <>
     <div className="flex items-center justify-center mt-[20px]">
       <div className=' w-[33.2%] bg-[#fff] pt-[15px]'>
-        <h2 className="text-[20px] md:text-[56px] text-right text-[#0A1C3C] font-bold  pr-4">EYEWEAR</h2>
+        <h2 className="text-[20px] md:text-[56px] text-right text-[#0A1C3C] font-bold  pr-4">
+          {leftHeading}
+        </h2>
       </div>
       <div className='flex items-center justify-between pr-[20px] w-[66.6%] bg-[#0A1C3C] pt-[15px]'>
-          <h2 className="text-[20px] md:text-[56px] font-normal md:font-bold w-full text-white pl-4" style={{ color:'transparent',WebkitTextStrokeWidth:'1px',WebkitTextStrokeColor: '#fff'}}>FOR ANY ACTIVITY</h2>
+          <h2
+            className="text-[20px] md:text-[56px] font-normal md:font-bold w-full text-white pl-4"
+            style={{ color:'transparent',WebkitTextStrokeWidth:'1px',WebkitTextStrokeColor: '#fff'}}
+          >
+            {rightHeading || 'FOR ANY ACTIVITY'}
+          </h2>
 
           <div className=" transform -translate-y-1/2 gap-2 z-20 hidden lg:flex">
             <button
@@ -81,7 +122,7 @@ export default function EyewearSlider() {
                 <div className="text-center">
                   <Image
                     src={item.image}
-                    alt={item.title}
+                    alt={item.alt || item.title}
                     width={300}
                     height={400}
                     className="w-full h-[450px] object-cover rounded"

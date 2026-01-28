@@ -5,7 +5,20 @@ import { HeartIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default function NewArrivalSection({ products }: { products: Product[] }) {
+export default function NewArrivalSection({
+  products,
+  heading,
+  buttonText,
+  buttonUrl,
+}: {
+  products: Product[];
+  heading?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+}) {
+  const resolvedHeading = heading || 'New Arrival Men Watch Look Style';
+  const resolvedButtonText = buttonText || 'VIEW ALL';
+  const resolvedButtonUrl = buttonUrl || '/shop';
 
   return (
       <div className="lg:pr-42 p-4">
@@ -17,7 +30,7 @@ export default function NewArrivalSection({ products }: { products: Product[] })
 
             {/* Title Text */}
             <h2 className="relative z-10 lg:text-4xl text-2xl text-center lg:text-left font-bold leading-tight text-black">
-              New Arrival Men Watch <br /> <span className="block">Look Style</span>
+              {resolvedHeading}
             </h2>
           </div>
           
@@ -88,8 +101,8 @@ export default function NewArrivalSection({ products }: { products: Product[] })
 
           {/* View All Button */}
           <div className="text-center">
-            <Link href={"/shop"} className="bg-yellow-600 text-white px-6 py-2 text-sm font-medium rounded shadow hover:bg-yellow-700 transition cursor-pointer">
-              VIEW ALL
+            <Link href={resolvedButtonUrl} className="bg-yellow-600 text-white px-6 py-2 text-sm font-medium rounded shadow hover:bg-yellow-700 transition cursor-pointer">
+              {resolvedButtonText}
             </Link>
           </div>
         </div>

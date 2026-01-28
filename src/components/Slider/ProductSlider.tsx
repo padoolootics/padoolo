@@ -34,6 +34,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
   const nextRef = useRef<HTMLButtonElement>(null);
 
   const isTabbed = layout === "tabbed";
+  const hasProducts = products && products.length > 0;
   const slidesPerView = isTabbed
     ? 5
     : layout === "single"
@@ -47,7 +48,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
   if (layout === "center-tabbed") {
     return (
       <CenterTabbedSlider
-        title="This Month’s Best Sellers"
+        title={title}
         products={products}
         tabs={tabs || []}
         selectedTab={selectedTab || ""}
@@ -143,21 +144,29 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
           }}
           className="!px-1"
         >
-          {layout === "grid2x2"
-            ? products
-                .filter((_, i) => i % 2 === 0)
-                .map((_, i) => (
-                  <SwiperSlide className="pt-[20px] border-t border-[#EBEBEB]" key={i}>
-                    <Grid2x2Slide products={products.slice(i * 2, i * 2 + 2)} />
-                  </SwiperSlide>
-                ))
-            : products.map((product) => (
-                <SwiperSlide className="pt-[20px] border-t border-[#EBEBEB]" key={product.id}>
-                  {layout === "single" && <SingleSlide product={product} />}
-                  {layout === "row4" && <Row4Slide product={product} />}
-                  {layout === "tabbed" && <ProductSlide product={product} />}
+          {!hasProducts ? (
+            <SwiperSlide className="pt-[20px] border-t border-[#EBEBEB]">
+              <div className="flex items-center justify-center min-h-[377px] w-full text-center text-gray-500">
+                Products not found
+              </div>
+            </SwiperSlide>
+          ) : layout === "grid2x2" ? (
+            products
+              .filter((_, i) => i % 2 === 0)
+              .map((_, i) => (
+                <SwiperSlide className="pt-[20px] border-t border-[#EBEBEB]" key={i}>
+                  <Grid2x2Slide products={products.slice(i * 2, i * 2 + 2)} />
                 </SwiperSlide>
-              ))}
+              ))
+          ) : (
+            products.map((product) => (
+              <SwiperSlide className="pt-[20px] border-t border-[#EBEBEB]" key={product.id}>
+                {layout === "single" && <SingleSlide product={product} />}
+                {layout === "row4" && <Row4Slide product={product} />}
+                {layout === "tabbed" && <ProductSlide product={product} />}
+              </SwiperSlide>
+            ))
+          )}
         </Swiper>
       </div>
     </div>

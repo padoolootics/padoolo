@@ -40,7 +40,8 @@ export default function CenterTabbedSlider({
 }: CenterTabbedSliderProps) {
   const swiperRef = useRef<SwiperType | null>(null);
   const slidesPerView = 4;
-  const shouldShowArrows = products.length > slidesPerView;
+  const hasProducts = products && products.length > 0;
+  const shouldShowArrows = hasProducts && products.length > slidesPerView;
 
   const slidePrev = () => {
     swiperRef.current?.slidePrev();
@@ -54,7 +55,7 @@ export default function CenterTabbedSlider({
   const rating = 0;
 
   return (
-    <div className="relative px-2 lg:px-0 bg-gray-100 text-center lg:py-18 pt-10 pb-0 px-4 lg:px-0">
+    <div className="relative bg-gray-100 text-center lg:py-18 pt-10 pb-0 px-4 lg:px-0">
       {/* Dynamic Title */}
       <div className="container mx-auto">
         {title && (
@@ -115,10 +116,17 @@ export default function CenterTabbedSlider({
               1024: { slidesPerView: 5 },
             }}
           >
-            {products.map((p) => (
-              <SwiperSlide key={p.id} className="">
-                <Link className="" href={`/product/${p?.slug}`} prefetch={true}>
-                  <div className="p-2 min-h-[377px] w-full md:w-[240px]">
+            {!hasProducts ? (
+              <SwiperSlide>
+                <div className="p-2 min-h-[377px] w-full flex items-center justify-center text-gray-500">
+                  Products not found
+                </div>
+              </SwiperSlide>
+            ) : (
+              products.map((p) => (
+                <SwiperSlide key={p.id} className="">
+                  <Link className="" href={`/product/${p?.slug}`} prefetch={true}>
+                    <div className="p-2 min-h-[377px] w-full md:w-[240px]">
                     {/*<figure className='flex items-center justify-center md:h-[300px] h-full w-full md:w-[240px] bg-[#EDECE8]'>
                         <Image
                           src={p.images ? p.images[0].src : '/placeholder.jpg'}
@@ -129,15 +137,15 @@ export default function CenterTabbedSlider({
                           />
             </figure>*/}
 
-                    <figure className="flex items-center overflow-hidden justify-center w-full aspect-[4/5] border border-gray-200 bg-[#ffffff] rounded-md">
-                      <Image
-                        src={p.images ? p.images[0].src : "/placeholder.jpg"}
-                        alt={p.name}
-                        className="w-full h-full object-contain"
-                        width={240}
-                        height={300}
-                      />
-                    </figure>
+                      <figure className="flex items-center overflow-hidden justify-center w-full aspect-[4/5] border border-gray-200 bg-[#ffffff] rounded-md">
+                        <Image
+                          src={p.images ? p.images[0].src : "/placeholder.jpg"}
+                          alt={p.name}
+                          className="w-full h-full object-contain"
+                          width={240}
+                          height={300}
+                        />
+                      </figure>
 
                     {/* Star Rating with yellow square boxes */}
                     {/* <div className="flex  gap-1 mt-2">
@@ -154,26 +162,27 @@ export default function CenterTabbedSlider({
                           </div>
                       ))}
                     </div> */}
-                    <div className="text-sm text-gray-500 mb-2 text-center mt-4">
-                      {p.brands.length > 0 ? (
-                        <p className="text-base font-semibold text-gray-500">
-                          {p.brands.map((c: any) => c.name).join(", ")}
-                        </p>
-                      ) : (
-                        ""
-                      )}
-                    </div>
+                      <div className="text-sm text-gray-500 mb-2 text-center mt-4">
+                        {p.brands.length > 0 ? (
+                          <p className="text-base font-semibold text-gray-500">
+                            {p.brands.map((c: any) => c.name).join(", ")}
+                          </p>
+                        ) : (
+                          ""
+                        )}
+                      </div>
 
-                    <h3 className="text-sm text-left text-[18px] font-semibold mt-2 cursor-pointer truncate md:overflow-visible md:whitespace-normal">
-                      {p.name}
-                    </h3>
-                    <p className="text-sm text-left text-[16px] font-[400]">
-                      €{p.price}
-                    </p>
-                  </div>
-                </Link>
-              </SwiperSlide>
-            ))}
+                      <h3 className="text-sm text-left text-[18px] font-semibold mt-2 cursor-pointer truncate md:overflow-visible md:whitespace-normal">
+                        {p.name}
+                      </h3>
+                      <p className="text-sm text-left text-[16px] font-[400]">
+                        €{p.price}
+                      </p>
+                    </div>
+                  </Link>
+                </SwiperSlide>
+              ))
+            )}
           </Swiper>
         </div>
       </div>

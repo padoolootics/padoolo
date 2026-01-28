@@ -118,9 +118,9 @@ export default function MainNav() {
               <Link href="/" className="-m-1.5 p-1.5 flex items-center">
                 <Image
                   alt="Padoolo Logo"
-                  src={logo ? logo : '/padoolo1.png'}
-                  className="h-auto w-20"
-                  width={96}
+                  src={logo ? logo : '/padoolo.webp'}
+                  className="h-auto w-36 lg:w-48"
+                  width={180}
                   height={62}
                 />
               </Link>
