@@ -54,8 +54,16 @@ const CategoryItem = ({
               : "text-gray-700 hover:text-amber-500"
           }`}
       >
-        <span>
+        {/* <span>
           {category.name} ({category.count})
+        </span> */}
+
+        <span>
+          {
+            new DOMParser().parseFromString(category.name, "text/html").body
+              .textContent
+          }{" "}
+          ({category.count})
         </span>
 
         {/* Arrow icon toggles only when clicked */}
