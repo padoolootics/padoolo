@@ -9,6 +9,9 @@ const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Padoolo - Your Online Shopping Destination",
   description: "Discover the best deals on fashion, electronics, and more at Padoolo. Shop now for quality products and unbeatable prices.",
