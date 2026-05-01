@@ -28,10 +28,22 @@ const PayPalComponent = ({
   createWooOrder,
   couponCode,
 }: PayPalComponentProps) => {
+  const mode = process.env.NEXT_PUBLIC_APP_MODE || "production";
+  const clientId = mode === 'testing' 
+    ? process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID 
+    : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_PROD_ID;
+
+  if (!clientId) {
+    return (
+      <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">
+        PayPal Client ID is not configured for the current environment ({mode}). 
+        Please check your Vercel/environment variables.
+      </div>
+    );
+  }
+
   const initialOptions = {
-    clientId: process.env.NEXT_PUBLIC_APP_MODE === 'testing' 
-      ? process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "" 
-      : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_PROD_ID || "",
+    clientId: clientId,
     currency: "EUR",
     intent: "capture",
   };
@@ -138,14 +150,6 @@ const PayPalComponent = ({
       toast.error("Payment was not completed. Please try again.");
     }
   };
-
-  if (!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
-    return (
-      <div>
-        PayPal Client ID is not configured. Please check your .env.local file.
-      </div>
-    );
-  }
 
   // Only render the PayPal buttons if there are items in the cart
   if (cartItems.length === 0) {
