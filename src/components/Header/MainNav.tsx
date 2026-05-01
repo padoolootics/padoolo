@@ -91,18 +91,18 @@ export default function MainNav() {
     hfSettingServices.getHFSettings().then((data) => {
       if (data?.header_menu?.length) {
         setMenu(data.header_menu);
-        setLogo(data.site_logo ? data.site_logo : '/padoolo1.png' );
+        setLogo(data.site_logo ? data.site_logo : '/padoolo1.png');
       }
     });
   }, []);
 
   // console.log('hfSettings', hfSettings);
-  
+
   const pathName = usePathname();
 
   useEffect(() => {
-  setMobileMenuOpen(false);
-}, [pathName]);
+    setMobileMenuOpen(false);
+  }, [pathName]);
 
   return (
     <>
@@ -120,8 +120,8 @@ export default function MainNav() {
                   alt="Padoolo Logo"
                   src={logo ? logo : '/padoolo.webp'}
                   className="h-auto w-36 lg:w-48"
-                  width={180}
-                  height={62}
+                  width={150}
+                  height={50}
                 />
               </Link>
 
@@ -213,15 +213,15 @@ export default function MainNav() {
 
             <div className="mt-6 space-y-4 flex flex-col">
               {menu.map((item) => (
-                      <Link
-                        key={item.label}
-                        href={item.url}
-                        prefetch
-                        className="text-base font-medium text-gray-900"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+                <Link
+                  key={item.label}
+                  href={item.url}
+                  prefetch
+                  className="text-base font-medium text-gray-900"
+                >
+                  {item.label}
+                </Link>
+              ))}
               {/* <Link
                 href="/"
                 prefetch={true}

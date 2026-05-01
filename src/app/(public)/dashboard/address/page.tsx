@@ -48,9 +48,9 @@ export default function Address() {
         <div className="md:flex block gap-6">
           {/* Main Content */}
           <main className="flex-1 space-y-6">
-          <h2 className="text-xl font-semibold mb-2">Cards & Address</h2>
+            <h2 className="text-xl font-semibold mb-2">Cards & Address</h2>
             {/* Payment Cards (static for now) */}
-            <PaymentCards />
+            {/* <PaymentCards /> */}
             {/* Info Cards */}
             <div className="grid md:grid-cols-2 gap-6">
               {/* Account Info */}
@@ -70,17 +70,17 @@ export default function Address() {
 
               {/* Billing Address */}
               <BillingAddress
-              title="Shipping Address"
-              showDelete
-              onDeleteClick={() => console.log("Deleted")}
-              user={{
-                name: 'Kevin Gilbert',
-                addressLine: 'East Bazar, Word No. 04...',
-                email: 'kevin.gilbert@gmail.com',
-                phone: '+1-202-555-0118'
-              }}
-              onEditClick={() => console.log("Edit clicked")}
-            />
+                title="Shipping Address"
+                showDelete
+                onDeleteClick={() => console.log("Deleted")}
+                user={{
+                  name: 'Kevin Gilbert',
+                  addressLine: 'East Bazar, Word No. 04...',
+                  email: 'kevin.gilbert@gmail.com',
+                  phone: '+1-202-555-0118'
+                }}
+                onEditClick={() => console.log("Edit clicked")}
+              />
 
 
             </div>
