@@ -36,7 +36,7 @@ const PayPalComponent = ({
   const mode = process.env.NEXT_PUBLIC_APP_MODE || "production";
   const clientId = mode === 'testing' 
     ? process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID 
-    : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_PROD_ID;
+    : (process.env.NEXT_PUBLIC_PAYPAL_CLIENT_PROD_ID || process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID);
 
   if (!clientId) {
     return (
