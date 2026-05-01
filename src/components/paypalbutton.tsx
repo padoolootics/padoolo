@@ -28,6 +28,11 @@ const PayPalComponent = ({
   createWooOrder,
   couponCode,
 }: PayPalComponentProps) => {
+  const [wooOrderId, setWooOrderId] = useState<number | undefined>(undefined);
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { clearCart } = useCartContext();
+
   const mode = process.env.NEXT_PUBLIC_APP_MODE || "production";
   const clientId = mode === 'testing' 
     ? process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID 
@@ -47,12 +52,6 @@ const PayPalComponent = ({
     currency: "EUR",
     intent: "capture",
   };
-
-  // State to store the WooCommerce Order ID
-  const [wooOrderId, setWooOrderId] = useState<number | undefined>(undefined);
-  const router = useRouter();
-  const { isAuthenticated } = useAuth();
-  const { clearCart } = useCartContext();
 
   const createOrder = async (data: any, actions: any) => {
     // Before creating the PayPal order, validate the user's form
