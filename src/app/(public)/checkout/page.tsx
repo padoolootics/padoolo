@@ -81,6 +81,16 @@ const CheckoutPage = () => {
       try {
         const gateways = await CheckoutServices.getPaymentGateways();
         setPaymentGateways(gateways || []);
+        
+        // If the current selected method is not in the list, select the first one
+        if (gateways && gateways.length > 0) {
+          const ids = gateways.map(g => g.id);
+          if (!ids.includes(selectedPaymentMethod)) {
+            // Prefer PayPal if available
+            const paypalGateway = gateways.find(g => g.id.includes("paypal") || g.id.startsWith("ppcp"));
+            setSelectedPaymentMethod(paypalGateway ? paypalGateway.id : gateways[0].id);
+          }
+        }
       } catch (error) {
         toast.error("Failed to load payment options.");
       } finally {
@@ -419,7 +429,7 @@ const CheckoutPage = () => {
               />
 
               <div className="mt-8">
-                {selectedPaymentMethod === "ppcp-gateway" ? (
+                {selectedPaymentMethod.includes("paypal") || selectedPaymentMethod.startsWith("ppcp") ? (
                   <PayPalComponent
                     cartItems={cartData.items.map(item => ({
                       product_id: item.product_id,
