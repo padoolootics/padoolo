@@ -43,7 +43,7 @@ const orders = [
 
 export default function Address() {
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100">
       <div className="container mx-auto">
         <div className="md:flex block gap-6">
           {/* Main Content */}

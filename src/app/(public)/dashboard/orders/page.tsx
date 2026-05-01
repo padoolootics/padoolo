@@ -117,8 +117,8 @@ export default function OrdersPage() {
         <div className="flex items-center justify-center p-6">
           {/* <ArrowPathIcon className="h-6 w-6 text-blue-500 animate-spin" /> */}
           <div className="text-center text-gray-500">
-              No recent orders found.
-            </div>
+            No recent orders found.
+          </div>
         </div>
       ) : (
         <table className="w-full text-sm text-left">
@@ -136,11 +136,10 @@ export default function OrdersPage() {
               <tr key={idx} className="border-b border-gray-300">
                 <td className="px-4 py-3 font-normal text-black">{order.id}</td>
                 <td
-                  className={`px-4 py-3 font-normal ${
-                    order.status === "delivered" || order.status === "completed" || order.status === "shipped"
+                  className={`px-4 py-3 font-normal ${order.status === "delivered" || order.status === "completed" || order.status === "shipped"
                       ? "text-green-600"
                       : "text-red-600"
-                  }`}
+                    }`}
                 >
                   {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                 </td>
@@ -167,7 +166,7 @@ export default function OrdersPage() {
 
       {/* Pagination */}
       {/* <div className="flex items-center justify-center p-4 border-t bg-gray-50"> */}
-        {/* <button
+      {/* <button
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((p) => p - 1)}
           className="w-8 h-8 rounded-full border hover:bg-gray-200 disabled:opacity-30 mr-2 flex items-center justify-center cursor-pointer"
@@ -175,7 +174,7 @@ export default function OrdersPage() {
           <ArrowLeft className="w-4 h-4" />
         </button> */}
 
-        {/* <div className="flex gap-2">
+      {/* <div className="flex gap-2">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}
@@ -191,7 +190,7 @@ export default function OrdersPage() {
           ))}
         </div> */}
 
-        {/* <button
+      {/* <button
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((p) => p + 1)}
           className="w-8 h-8 rounded-full border hover:bg-gray-200 disabled:opacity-30 ml-2 flex items-center justify-center cursor-pointer"

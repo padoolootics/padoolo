@@ -55,7 +55,7 @@ export default function DashboardLayout({
 
   // Final check before rendering
   const isUserAuthenticated = isAuthenticated || status === "authenticated";
-  
+
   if (!isUserAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -70,7 +70,7 @@ export default function DashboardLayout({
 
   // User is authenticated, render the dashboard
   return (
-    <div className="bg-gray-100 h-full lg:min-h-screen py-10">
+    <div className="bg-gray-100 h-full py-10">
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
         <Breadcrumb />
@@ -88,9 +88,8 @@ export default function DashboardLayout({
         <div className="lg:flex xl:flex gap-6">
           {/* Sidebar */}
           <div
-            className={`${
-              isSidebarOpen ? "block" : "hidden"
-            } lg:block w-full lg:w-auto`}
+            className={`${isSidebarOpen ? "block" : "hidden"
+              } lg:block w-full lg:w-auto`}
           >
             <Sidebar />
           </div>
