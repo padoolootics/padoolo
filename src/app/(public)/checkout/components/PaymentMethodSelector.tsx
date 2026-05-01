@@ -24,15 +24,14 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 hidden">
       {gateways.map((gateway) => (
         <label
           key={gateway.id}
-          className={`flex items-start p-4 border rounded-xl cursor-pointer transition ${
-            selectedMethod === gateway.id
+          className={`flex items-start p-4 border rounded-xl cursor-pointer transition ${selectedMethod === gateway.id
               ? "border-yellow-500 bg-yellow-50/30"
               : "border-gray-200 hover:border-gray-300"
-          }`}
+            }`}
         >
           <input
             type="radio"
@@ -46,8 +45,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             <span className="block text-sm font-semibold text-gray-900">
               {gateway.title}
             </span>
-            <span className="block text-xs text-gray-500 mt-1" 
-                  dangerouslySetInnerHTML={{ __html: gateway.description }}>
+            <span className="block text-xs text-gray-500 mt-1"
+              dangerouslySetInnerHTML={{ __html: gateway.description }}>
             </span>
           </div>
         </label>

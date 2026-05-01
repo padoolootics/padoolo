@@ -59,7 +59,7 @@ const CheckoutPage = () => {
   // State
   const [paymentGateways, setPaymentGateways] = useState<PaymentGateway[]>([]);
   const [isLoadingGateways, setIsLoadingGateways] = useState(true);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("ppcp-gateway");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
   const [cartData, setCartData] = useState<CartTotalResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
@@ -79,16 +79,29 @@ const CheckoutPage = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const gateways = await CheckoutServices.getPaymentGateways();
-        setPaymentGateways(gateways || []);
+        const fetchedGateways = await CheckoutServices.getPaymentGateways();
+        const allGateways = fetchedGateways || [];
+        const filteredGateways = allGateways.filter((g, index, self) => {
+          // Specifically remove redundant card and pay-later entries from PayPal Payments plugin
+          const isRedundant = (g.id.includes("card") || g.id.includes("pay-later")) && (g.id.startsWith("ppcp") || g.id.includes("paypal"));
+          if (isRedundant) return false;
+
+          const isPayPal = g.id.includes("paypal") || g.id.startsWith("ppcp");
+          if (isPayPal) {
+            // Keep only the first main PayPal gateway
+            return index === self.findIndex(ig => (ig.id === "ppcp-gateway" || ig.id === "paypal") || (ig.id.includes("paypal") || ig.id.startsWith("ppcp")));
+          }
+          return true;
+        });
+        setPaymentGateways(filteredGateways);
         
         // If the current selected method is not in the list, select the first one
-        if (gateways && gateways.length > 0) {
-          const ids = gateways.map(g => g.id);
+        if (filteredGateways.length > 0) {
+          const ids = filteredGateways.map(g => g.id);
           if (!ids.includes(selectedPaymentMethod)) {
             // Prefer PayPal if available
-            const paypalGateway = gateways.find(g => g.id.includes("paypal") || g.id.startsWith("ppcp"));
-            setSelectedPaymentMethod(paypalGateway ? paypalGateway.id : gateways[0].id);
+            const paypalGateway = filteredGateways.find(g => g.id.includes("paypal") || g.id.startsWith("ppcp"));
+            setSelectedPaymentMethod(paypalGateway ? paypalGateway.id : filteredGateways[0].id);
           }
         }
       } catch (error) {
@@ -144,7 +157,7 @@ const CheckoutPage = () => {
 
   // Google Maps Logic
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || isLoading || cartLoading) return;
 
     const SCRIPT_ID = 'google-maps-script';
 
@@ -217,7 +230,7 @@ const CheckoutPage = () => {
         existingScript.removeEventListener('load', handleLoad);
       }
     };
-  }, [GOOGLE_API_KEY, shipToDifferentAddress]);
+  }, [GOOGLE_API_KEY, shipToDifferentAddress, isLoading, cartLoading]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: "billing" | "shipping") => {
     const { name, value } = e.target;
