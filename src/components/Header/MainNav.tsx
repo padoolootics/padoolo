@@ -119,7 +119,7 @@ export default function MainNav() {
                 <Image
                   alt="Padoolo Logo"
                   src={logo ? logo : '/padoolo.webp'}
-                  className="h-auto w-36 lg:w-48"
+                  className="h-auto w-36 lg:w-40"
                   width={150}
                   height={50}
                 />

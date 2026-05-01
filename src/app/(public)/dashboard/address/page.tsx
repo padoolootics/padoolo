@@ -48,7 +48,7 @@ export default function Address() {
         <div className="md:flex block gap-6">
           {/* Main Content */}
           <main className="flex-1 space-y-6">
-            <h2 className="text-xl font-semibold mb-2">Cards & Address</h2>
+            <h2 className="text-xl font-semibold mb-2">Billing & Shipping Address</h2>
             {/* Payment Cards (static for now) */}
             {/* <PaymentCards /> */}
             {/* Info Cards */}

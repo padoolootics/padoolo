@@ -11,7 +11,7 @@ const links = [
   { href: "/dashboard/orders", label: "Order History" },
   { href: "/dashboard/track-order", label: "Track Order" },
   // { href: '/dashboard/wishlist', label: 'Wishlist' },
-  { href: "/dashboard/address", label: "Card & Address" },
+  { href: "/dashboard/address", label: "Billing & Shipping Address" },
   // { href: '/dashboard/notifications', label: 'Notifications' },
   { href: "/dashboard/settings", label: "Settings" },
   { href: "/login", label: "Logout" },
