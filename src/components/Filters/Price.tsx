@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';
 
+import { formatPrice } from '@/lib/utils/currency';
+
 // Define the props for the PriceFilter component
 interface PriceFilterProps {
   onPriceChange: (min: number, max: number) => void;
@@ -33,7 +35,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange, minRange, maxR
 
   // Helper function to render the value label above the slider thumbs
   const valueLabelFormat = (value: number) => {
-    return `€${value}`;
+    return formatPrice(value);
   };
 
   return (
@@ -65,13 +67,14 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange, minRange, maxR
             },
             '& .MuiSlider-valueLabel': {
               backgroundColor: '#1f2937',
+              fontSize: '10px',
             },
           }}
         />
       </Box>
       <div className="flex justify-between text-sm text-gray-600">
-        <span>Min: €{value[0]}</span>
-        <span>Max: €{value[1]}</span>
+        <span>Min: {formatPrice(value[0])}</span>
+        <span>Max: {formatPrice(value[1])}</span>
       </div>
     </div>
   );

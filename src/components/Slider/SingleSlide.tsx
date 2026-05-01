@@ -3,6 +3,7 @@ import { Product } from "@/types/products";
 import WishlistButton from "@/components/WishlistButton";
 import Link from "next/link";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils/currency";
 
 interface SingleSlideProps {
   product: Product;
@@ -74,15 +75,15 @@ const SingleSlide: React.FC<SingleSlideProps> = ({ product }) => {
           {hasDiscount ? (
             <>
               <span className="text-gray-400 line-through mr-2">
-                €{product.regular_price}
+                {formatPrice(product.regular_price)}
               </span>
               <span className="text-red-600 text-[20px] font-semibold">
-                €{product.sale_price}
+                {formatPrice(product.sale_price)}
               </span>
             </>
           ) : (
             <span className="text-gray-800 text-[20px] font-medium">
-              €{product.price}
+              {formatPrice(product.price)}
             </span>
           )}
         </div>

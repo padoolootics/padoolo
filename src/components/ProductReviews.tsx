@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/lib/Contexts/AuthContext";
 import React, { useState, useEffect, FormEvent } from "react";
+import ReviewServices from "@/lib/api/services/ReviewServices";
 
 // Type definitions for the data
 interface Review {
@@ -61,12 +62,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId }) => {
     setLoading(true);
     setError(null);
     try {
-      // Updated fetch URL to match your `app/api/reviews/route.ts` file path
-      const response = await fetch(`/api/reviews?productId=${productId}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch reviews.");
-      }
-      const data: Review[] = await response.json();
+      const data = await ReviewServices.getReviewsByProductId(productId);
       setReviews(data);
     } catch (err) {
       setError("Could not load reviews. Please try again.");
@@ -82,22 +78,10 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId }) => {
     setSubmissionMessage(null);
 
     try {
-      // Updated fetch URL to match your `app/api/reviews/route.ts` file path
-      const response = await fetch("/api/reviews", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...newReview,
-          product_id: productId,
-        }),
+      await ReviewServices.submitReview({
+        ...newReview,
+        product_id: productId,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit review.");
-      }
 
       setSubmissionMessage("Your review has been submitted successfully!");
       // Reset the form after successful submission

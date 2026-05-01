@@ -237,8 +237,8 @@ export interface CheckoutRequest {
     postcode: string;
     country: string;
     state: string;
-    phone: string;
-    email: string;
+    phone?: string;
+    email?: string;
   };
   line_items: Array<{
     product_id: number;

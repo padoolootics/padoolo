@@ -25,8 +25,11 @@ interface OrderPayload {
     shipping: {
         first_name: string;
         last_name: string;
+        company?: string;
         address_1: string;
+        address_2?: string;
         city: string;
+        state?: string;
         postcode: string;
         country: string;
     };
@@ -34,11 +37,11 @@ interface OrderPayload {
         product_id: number;
         quantity: number;
     }>;
-    shipping_lines: {
+    shipping_lines: Array<{
         method_id: string;
         method_title: string;
         total: string;
-    };
+    }>;
     coupon_lines?: Array<{
         code: string;
     }>;

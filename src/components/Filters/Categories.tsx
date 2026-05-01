@@ -27,7 +27,20 @@ const CategoryItem = ({
   onCategorySelect: (id: number) => void;
   selectedCategoryId: number;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // Check if this category or any of its children matches the selectedCategoryId
+  const isParentOfSelected = (cat: Category, selectedId: number): boolean => {
+    if (cat.id === selectedId) return true;
+    return cat.children.some(child => isParentOfSelected(child, selectedId));
+  };
+
+  const [isOpen, setIsOpen] = useState(isParentOfSelected(category, selectedCategoryId));
+
+  // Update isOpen when selectedCategoryId changes
+  useEffect(() => {
+    if (isParentOfSelected(category, selectedCategoryId)) {
+      setIsOpen(true);
+    }
+  }, [selectedCategoryId]);
 
   // Handle category name click (sets category ID and does not toggle children)
   const handleCategoryClick = (e: React.MouseEvent) => {
@@ -58,13 +71,10 @@ const CategoryItem = ({
           {category.name} ({category.count})
         </span> */}
 
-        <span>
-          {
-            new DOMParser().parseFromString(category.name, "text/html").body
-              .textContent
-          }{" "}
-          ({category.count})
-        </span>
+        <div className="flex items-center">
+          <span dangerouslySetInnerHTML={{ __html: category.name }} />
+          <span className="ml-1 text-gray-400">({category.count})</span>
+        </div>
 
         {/* Arrow icon toggles only when clicked */}
         {category.children.length > 0 && (

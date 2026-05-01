@@ -6,8 +6,8 @@ export default async function Page() {
   return (
     <>
       <Banner
-        title={"Sunglasses"}
-        breadcrumb={["Home", "Category", "Sunglasses"]}
+        title={"Eyeglasses"}
+        breadcrumb={["Home", "Category", "Eyeglasses"]}
       />
       <ShopComponent catId={categoryId} />
     </>

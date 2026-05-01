@@ -11,6 +11,7 @@ import Prices from "../Prices";
 import { useCartContext } from "@/lib/Contexts/CartContext";
 import ProductServices from "@/lib/api/services/ProductServices";
 import { Product } from "@/types/products";
+import { formatPrice } from "@/lib/utils/currency";
 
 // interface Product {
 //   id: number;
@@ -208,7 +209,7 @@ export default function CartDropdown() {
                           Shipping and taxes calculated at checkout.
                         </span>
                       </span>
-                      <span>€{subtotal}</span>
+                      <span>{formatPrice(subtotal)}</span>
                     </p>
                     <div className="mt-5 grid grid-cols-2 gap-2">
                       <ButtonPrimary

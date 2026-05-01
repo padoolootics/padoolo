@@ -35,6 +35,10 @@ async function generateAccessToken(): Promise<string> {
     },
   });
   const data = await response.json();
+  if (!response.ok) {
+    console.error("PayPal Access Token Error:", data);
+    throw new Error(data.error_description || "Failed to generate PayPal access token");
+  }
   return data.access_token;
 }
 
@@ -216,14 +220,43 @@ export async function POST(req: Request) {
     const accessToken = await generateAccessToken();
 
     if (action === "createOrder") {
-      // Cart items are received here but are not used to calculate the total on the server
-      // because we're using the `wooOrderTotal` that was already securely generated
-      // by the `createWooOrder` function on the client.
+      // Clean the total: remove any currency symbols and ensure proper decimal format
+      // WooCommerce API usually returns "123.45", but we handle edge cases here
+      let cleanTotal = String(wooOrderTotal).trim();
+      
+      // If it contains a comma and no dot, it's likely a European decimal (e.g. "123,45")
+      if (cleanTotal.includes(',') && !cleanTotal.includes('.')) {
+        cleanTotal = cleanTotal.replace(',', '.');
+      }
+      
+      // Remove all non-numeric characters except for the dot
+      cleanTotal = cleanTotal.replace(/[^\d.]/g, '');
+      
+      const numericTotal = parseFloat(cleanTotal);
+      if (isNaN(numericTotal) || numericTotal <= 0) {
+        console.error("Invalid numeric total for PayPal:", cleanTotal);
+        return NextResponse.json({ error: "Invalid order total. Must be greater than 0." }, { status: 400 });
+      }
+      
+      cleanTotal = numericTotal.toFixed(2);
+      
+      console.log(`Sanitized total for PayPal: Original="${wooOrderTotal}", Cleaned="${cleanTotal}"`);
+      
       const order = await createPayPalOrder(
         accessToken,
-        wooOrderTotal
+        cleanTotal
       );
-      console.log("Created PayPal order:", order);
+      console.log("PayPal API createOrder response:", JSON.stringify(order, null, 2));
+      
+      if (!order.id) {
+        console.error("PayPal order creation failed. Details:", JSON.stringify(order, null, 2));
+        let errorMessage = order.message || "Unknown PayPal error";
+        if (order.details && order.details.length > 0) {
+          errorMessage += ": " + order.details.map((d: any) => d.description || d.issue).join(", ");
+        }
+        return NextResponse.json({ error: errorMessage, details: order }, { status: 400 });
+      }
+
       return NextResponse.json({ orderID: order.id });
     }
 

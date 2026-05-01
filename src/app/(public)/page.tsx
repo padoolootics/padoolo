@@ -3,119 +3,45 @@ import HeroSlider from "@/components/HeroSlider";
 import ImageSlider from "@/components/Slider/ImageSlider";
 import NewArrival from "@/components/NewArrival";
 import ProductTabber from "./components/Tabber";
-import ProductServices from "@/lib/api/services/ProductServices";
-import PageServices from "@/lib/api/services/pageServices";
+import HomeServices from "@/lib/api/services/HomeServices";
 import { Product } from "@/types/products";
 
-// type Product = {
-//   id: number;
-//   name: string;
-//   slug: string;
-//   price: number;
-//   image: string;
-//   category?: string;
-// };
-
 export default async function Home() {
-  // const pageData = await PageServices.getPageBySlug("home-page");
-
-  // const spotlightRawProducts = await ProductServices.getProductsByCategory(
-  //   pageData?.acf?.spotlight_deals
-  // );
-  // const newArrivalsRawProducts = await ProductServices.getProductsByCategory(
-  //   pageData?.acf?.new_arrivals
-  // );
-  // const sunglassesRawProducts = await ProductServices.getProductsByCategory(
-  //   pageData?.acf?.sunglasses_category_id
-  // );
-  // const eyeglassesRawProducts = await ProductServices.getProductsByCategory(
-  //   pageData?.acf?.eyeglasses_category_id
-  // );
-  // const latestRawProducts = await ProductServices.getProductsByCategory(
-  //   pageData?.acf?.latest_products_category_id
-  // );
-  // const bestsellersRawProducts = await ProductServices.getProductsByCategory(
-  //   pageData?.acf?.bestsellers_category_id
-  // );
-  // const watchRawProducts = await ProductServices.getProductsByCategory(
-  //   pageData?.acf?.watch_category_id
-  // );
-
-  let pageData: any = null;
-
-  let sec2_1_products: Product[] = [];
-  let sec2_2_products: Product[] = [];
-  let sec4_tab1_products: Product[] = [];
-  let sec4_tab2_products: Product[] = [];
-  let sec5_tab1_products: Product[] = [];
-  let sec5_tab2_products: Product[] = [];
-  let sec6_products: Product[] = [];
-  let sec7_tab1_products: Product[] = [];
-  let sec7_tab2_products: Product[] = [];
-  let sec8_tab1_products: Product[] = [];
-  let sec8_tab2_products: Product[] = [];
+  let masterData: any = null;
 
   try {
-    pageData = await PageServices.getPageBySlug("home-page");
-
-    const acf = pageData?.acf || {};
-
-    const [
-      _sec2_1,
-      _sec2_2,
-      _sec4_1,
-      _sec4_2,
-      _sec5_1,
-      _sec5_2,
-      _sec6,
-      _sec7_1,
-      _sec7_2,
-      _sec8_1,
-      _sec8_2,
-    ] = await Promise.all([
-      ProductServices.getProductsByCategory(acf?.sec2_1_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec2_2_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec4_tab1_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec4_tab_2_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec5_tab_1_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec5_tab_2_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec6_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec7_tab_1_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec7_tab_2_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec8_tab_1_category_id || ""),
-      ProductServices.getProductsByCategory(acf?.sec8_tab_2_category_id || ""),
-    ]);
-
-    sec2_1_products = _sec2_1;
-    sec2_2_products = _sec2_2;
-    sec4_tab1_products = _sec4_1;
-    sec4_tab2_products = _sec4_2;
-    sec5_tab1_products = _sec5_1;
-    sec5_tab2_products = _sec5_2;
-    sec6_products = _sec6;
-    sec7_tab1_products = _sec7_1;
-    sec7_tab2_products = _sec7_2;
-    sec8_tab1_products = _sec8_1;
-    sec8_tab2_products = _sec8_2;
+    masterData = await HomeServices.getHomeMasterData();
   } catch (error) {
-    console.error("Error fetching data:", error);
-    pageData = { acf: {} };
-    sec2_1_products = [];
-    sec2_2_products = [];
-    sec4_tab1_products = [];
-    sec4_tab2_products = [];
-    sec5_tab1_products = [];
-    sec5_tab2_products = [];
-    sec6_products = [];
-    sec7_tab1_products = [];
-    sec7_tab2_products = [];
-    sec8_tab1_products = [];
-    sec8_tab2_products = [];
+    console.error("Error fetching home data:", error);
+    masterData = { 
+      pageData: { acf: {} }, 
+      sections: {
+        sec2_1: [], sec2_2: [], sec4_tab1: [], sec4_tab2: [],
+        sec5_tab1: [], sec5_tab2: [], sec6: [], sec7_tab1: [],
+        sec7_tab2: [], sec8_tab1: [], sec8_tab2: []
+      } 
+    };
   }
+
+  const { pageData, sections } = masterData;
+  const acf = pageData?.acf || {};
+  
+  const {
+    sec2_1: sec2_1_products,
+    sec2_2: sec2_2_products,
+    sec4_tab1: sec4_tab1_products,
+    sec4_tab2: sec4_tab2_products,
+    sec5_tab1: sec5_tab1_products,
+    sec5_tab2: sec5_tab2_products,
+    sec6: sec6_products,
+    sec7_tab1: sec7_tab1_products,
+    sec7_tab2: sec7_tab2_products,
+    sec8_tab1: sec8_tab1_products,
+    sec8_tab2: sec8_tab2_products,
+  } = sections;
 
   // console.log('spotlightRawProducts', spotlightRawProducts);
 
-  const acf = pageData?.acf || {};
   const sec4Tab1Title = acf?.sec4_tab_1_title || "Sunglasses";
   const sec4Tab2Title = acf?.sec4_tab_2_title || "Glasses";
   const sec5Tab1Title = acf?.sec5_tab_1_title || "Tab 1";

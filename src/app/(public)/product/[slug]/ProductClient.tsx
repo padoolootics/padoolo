@@ -24,6 +24,8 @@ import ProductShareButton from "@/components/ShareButton";
 import ProductReviews from "@/components/ProductReviews";
 import ZipCodeChecker from "./ZipcodeChecker";
 
+import { formatPrice } from "@/lib/utils/currency";
+
 type ProductClientProps = {
   product: Product;
   variations: ProductVariation[];
@@ -134,15 +136,15 @@ export default function ProductClient({
       return (
         <div className="text-xl font-bold text-black-600">
           <span className="line-through text-gray-400 text-base mr-2">
-            €{Number(regPrice).toFixed(2)}
+            {formatPrice(regPrice)}
           </span>
-          €{Number(salePrice).toFixed(2)}
+          {formatPrice(salePrice)}
         </div>
       );
     }
     return (
       <div className="text-2xl font-bold text-gray-800">
-        €{Number(price).toFixed(2)}
+        {formatPrice(price)}
       </div>
     );
   };
@@ -184,13 +186,12 @@ export default function ProductClient({
     const isInstock = currentStockStatus === "instock";
     return (
       <span
-        className={`px-3 py-1 text-sm font-semibold rounded-full ${
-          isInstock ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-        }`}
+        className={`px-3 py-1 text-sm font-semibold rounded-full ${isInstock ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
       >
         {isInstock
           ? (product.stock_quantity == null ? "" : product.stock_quantity) +
-            " In Stock"
+          " In Stock"
           : "Out of Stock"}
       </span>
     );
@@ -282,15 +283,13 @@ export default function ProductClient({
                     disabled={!isOptionAvailable}
                     className={`
                       px-4 py-2 border rounded-lg text-sm transition-all duration-150
-                      ${
-                        isSelected
-                          ? "border-indigo-600 bg-indigo-50 text-indigo-800 font-medium"
-                          : "border-gray-300 text-gray-600 hover:bg-gray-100"
+                      ${isSelected
+                        ? "border-indigo-600 bg-indigo-50 text-indigo-800 font-medium"
+                        : "border-gray-300 text-gray-600 hover:bg-gray-100"
                       }
-                      ${
-                        !isOptionAvailable
-                          ? "opacity-50 cursor-not-allowed line-through"
-                          : ""
+                      ${!isOptionAvailable
+                        ? "opacity-50 cursor-not-allowed line-through"
+                        : ""
                       }
                     `}
                   >
@@ -428,9 +427,8 @@ export default function ProductClient({
                   <span
                     key={i}
                     className="px-2 py-1 bg-gray-100 rounded-sm mr-2"
-                  >
-                    {c.name}
-                  </span>
+                    dangerouslySetInnerHTML={{ __html: c.name }}
+                  />
                 ))}
               </p>
             ) : (
@@ -439,9 +437,15 @@ export default function ProductClient({
           </div>
           <div className="text-sm text-gray-500 mb-2">
             {product.brands.length > 0 ? (
-              <p className="text-2xl font-semibold text-gray-500">
-                {product.brands.map((c: any) => c.name).join(", ")}
-              </p>
+              <div className="flex flex-wrap gap-2">
+                {product.brands.map((b: any, i: any) => (
+                  <span
+                    key={i}
+                    className="text-2xl font-semibold text-gray-500"
+                    dangerouslySetInnerHTML={{ __html: b.name + (i < product.brands.length - 1 ? ", " : "") }}
+                  />
+                ))}
+              </div>
             ) : (
               ""
             )}
@@ -573,12 +577,11 @@ export default function ProductClient({
                 </div>
 
                 <button
-                  className={`cursor-pointer bg-[#001F3E] text-[16px] text-white px-6 py-3 ${
-                    currentStockStatus === "instock" &&
-                    (product.type !== "variable" || allAttributesSelected)
+                  className={`cursor-pointer bg-[#001F3E] text-[16px] text-white px-6 py-3 ${currentStockStatus === "instock" &&
+                      (product.type !== "variable" || allAttributesSelected)
                       ? "bg-yellow-600 hover:bg-yellow-700"
                       : "bg-gray-400 cursor-not-allowed"
-                  }`}
+                    }`}
                   disabled={
                     currentStockStatus !== "instock" ||
                     (product.type === "variable" && !allAttributesSelected)
@@ -638,18 +641,22 @@ export default function ProductClient({
               ""
             )}
             {product.categories.length > 0 ? (
-              <p>
+              <div className="flex gap-1">
                 <strong>Category:</strong>{" "}
-                {product.categories.map((c: any) => c.name).join(", ")}
-              </p>
+                {product.categories.map((c: any, i: any) => (
+                  <span key={i} dangerouslySetInnerHTML={{ __html: c.name + (i < product.categories.length - 1 ? ", " : "") }} />
+                ))}
+              </div>
             ) : (
               ""
             )}
             {product.tags.length > 0 ? (
-              <p>
+              <div className="flex gap-1">
                 <strong>Tags:</strong>{" "}
-                {product.tags.map((t: any) => t.name).join(", ")}
-              </p>
+                {product.tags.map((t: any, i: any) => (
+                  <span key={i} dangerouslySetInnerHTML={{ __html: t.name + (i < product.tags.length - 1 ? ", " : "") }} />
+                ))}
+              </div>
             ) : (
               ""
             )}
@@ -717,11 +724,10 @@ export default function ProductClient({
             <button
               key={index}
               onClick={() => setActiveTab(index)}
-              className={`w-[200px] py-2 px-1 text-base transition-all duration-150 border-b-2 ${
-                activeTab === index
+              className={`w-[200px] py-2 px-1 text-base transition-all duration-150 border-b-2 ${activeTab === index
                   ? "border-black text-black font-medium"
                   : "border-transparent text-gray-500 hover:text-black"
-              }`}
+                }`}
             >
               {tab.label}
             </button>

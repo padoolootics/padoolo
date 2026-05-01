@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
       rating: product.average_rating ? parseFloat(product.average_rating) : 0,
     }));
 
-    return NextResponse.json({ products: data, totalPages });
+    return NextResponse.json({ products: data, totalPages, total });
   } catch (error) {
     console.error("Error fetching products from WooCommerce:", error);
     return NextResponse.json(

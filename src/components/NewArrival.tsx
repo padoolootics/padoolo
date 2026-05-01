@@ -1,9 +1,10 @@
 'use client';
 
-import { Product } from '@/types/products';
-import { HeartIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image from 'next/image';
+import { HeartIcon } from '@heroicons/react/24/outline';
+import { Product } from '@/types/products';
+import { formatPrice } from '@/lib/utils/currency';
 
 export default function NewArrivalSection({
   products,
@@ -87,10 +88,10 @@ export default function NewArrivalSection({
                 
                 {/* Pricing */}
                 <div className="mt-1 text-sm font-bold text-gray-900">
-                  €{product.price}
+                  {formatPrice(product.price)}
                   {product.sale_price && (
                     <span className="line-through text-gray-400 text-xs ml-1">
-                      €{product.regular_price}
+                      {formatPrice(product.regular_price)}
                     </span>
                   )}
                 </div>

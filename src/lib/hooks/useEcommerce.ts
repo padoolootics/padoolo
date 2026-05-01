@@ -1,20 +1,20 @@
 import { useAuth } from '../Contexts/AuthContext';
-// import { useCart } from '../Contexts/CartContext';
-import { useWishlist } from '../Contexts/WishlistContext';
+import { useCartContext } from '../Contexts/CartContext';
+import { useWishlistContext } from '../Contexts/WishlistContextMain';
 
 export const useEcommerce = () => {
   const auth = useAuth();
-  // const cart = useCart();
-  const wishlist = useWishlist();
+  const cart = useCartContext();
+  const wishlist = useWishlistContext();
 
   return {
     ...auth,
-    // ...cart,
+    ...cart,
     ...wishlist,
     // Convenience method to clear all user data
     clearAll: () => {
       auth.logout();
-      // cart.clearCart();
+      cart.clearCart();
       wishlist.clearWishlist();
     },
   };

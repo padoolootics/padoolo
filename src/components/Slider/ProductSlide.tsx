@@ -3,6 +3,7 @@ import { Product } from "@/types/products";
 import WishlistButton from "@/components/WishlistButton";
 import Link from "next/link";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils/currency";
 
 interface Props {
   product: Product;
@@ -10,9 +11,6 @@ interface Props {
 
 const ProductSlide: React.FC<Props> = ({ product }) => {
   const hasDiscount = !!product.discountPercent;
-  const discountedPrice = hasDiscount
-    ? product.price * (1 - product.discountPercent! / 100)
-    : product.price;
 
   // Assume product.rating is a number between 0 and 5
   const rating = product.rating ?? 0;
@@ -94,14 +92,14 @@ const ProductSlide: React.FC<Props> = ({ product }) => {
             {hasDiscount ? (
               <>
                 <span className="text-gray-400 font-[400] line-through mr-2">
-                  €{product.price}
+                  {formatPrice(product.regular_price)}
                 </span>
                 <span className="text-red-600 font-[400]">
-                  €{discountedPrice}
+                  {formatPrice(product.sale_price)}
                 </span>
               </>
             ) : (
-              <span className="text-gray-800 font-[400]">€{product.price}</span>
+              <span className="text-gray-800 font-[400]">{formatPrice(product.price)}</span>
             )}
           </div>
         </div>

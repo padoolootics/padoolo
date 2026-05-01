@@ -5,6 +5,7 @@ import WishlistButton from "@/components/WishlistButton";
 import { useCartContext } from "@/lib/Contexts/CartContext";
 import Link from "next/link";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils/currency";
 
 interface Grid2x2SlideProps {
   products: Product[];
@@ -17,7 +18,7 @@ const Grid2x2Slide: React.FC<Grid2x2SlideProps> = ({ products }) => {
     <div className="flex flex-col space-y-4">
       {products.map((product) => {
         const hasDiscount = !!product.discountPercent;
-        const discountedPrice = 0;
+        const discountedPrice = product.sale_price;
 
         return (
           <div className="relative " key={product.id}>
@@ -81,15 +82,15 @@ const Grid2x2Slide: React.FC<Grid2x2SlideProps> = ({ products }) => {
                   {hasDiscount ? (
                     <>
                       <span className="text-gray-400 line-through mr-2">
-                        €{product.price}
+                        {formatPrice(product.regular_price)}
                       </span>
                       <span className="text-red-600 text-[18px] font-semibold">
-                        €{discountedPrice}
+                        {formatPrice(product.sale_price)}
                       </span>
                     </>
                   ) : (
                     <span className="text-gray-800 font-[500] text-[18px]">
-                      €{product.price}
+                      {formatPrice(product.price)}
                     </span>
                   )}
                 </div>

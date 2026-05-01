@@ -40,7 +40,6 @@ export async function GET(req: NextRequest) {
         consumer_key: CONSUMER_KEY || '',
         consumer_secret: CONSUMER_SECRET || '',
         per_page: "100", // Fetch a large number of categories to ensure we get all of them
-        hide_empty: "true"
     }).toString();
 
     const url = `${WOOCOMMERCE_URL}/wp-json/wc/v3/products/categories?${queryString}`;
@@ -52,8 +51,11 @@ export async function GET(req: NextRequest) {
     }
     const data = await response.json();
 
+    // Filter out Uncategorized
+    const filteredData = data.filter((cat: any) => cat.slug !== "uncategorized");
+
     // Build the hierarchical tree structure
-    const categoryTree = buildCategoryTree(data);
+    const categoryTree = buildCategoryTree(filteredData);
 
     return NextResponse.json(categoryTree);
   } catch (error) {

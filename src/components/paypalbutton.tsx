@@ -48,7 +48,9 @@ const PayPalComponent = ({
     }
 
     // First, create the order in WooCommerce to get the total and order ID securely
+    console.log("Attempting to create WooCommerce order...");
     const wooOrderData = await createWooOrder();
+    console.log("WooCommerce order creation result:", wooOrderData);
 
     if (!wooOrderData || !wooOrderData.orderId || !wooOrderData.orderTotal) {
       toast.error("Failed to create WooCommerce order. Please try again.");
@@ -81,8 +83,12 @@ const PayPalComponent = ({
 
     if (!response.ok) {
       // Show an error to the user if the order creation fails
-      toast.error(`Failed to create PayPal order: ${order.error}`);
-      throw new Error(`Failed to create PayPal order: ${order.error}`);
+      const errorMsg = order.error || "Unknown error creating PayPal order";
+      toast.error(`Checkout Error: ${errorMsg}`, {
+        autoClose: 10000, // Show for longer if it's a complex error
+      });
+      console.error("PayPal creation error details:", order);
+      throw new Error(`Failed to create PayPal order: ${errorMsg}`);
     }
 
     // Return the PayPal order ID to the PayPal SDK

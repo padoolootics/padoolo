@@ -13,6 +13,7 @@ import { useAuth } from "@/lib/Contexts/AuthContext";
 import { setAuthToken } from "@/lib/api/services/httpServices";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import { formatPrice } from "@/lib/utils/currency";
 
 const CartPage = () => {
   const { cart, removeFromCart, updateCartItem } = useCartContext();
@@ -311,7 +312,7 @@ const CartPage = () => {
                         )}
                       </p>
                       <p className="text-sm font-semibold text-gray-500">
-                        €{item.price}
+                        {formatPrice(item.price)}
                       </p>
                     </div>
                   </div>
@@ -366,10 +367,7 @@ const CartPage = () => {
                       </div>
                     </div>
                     <p className="text-sm mb-0 text-gray-500">
-                      €
-                      {(
-                        parseFloat(item.line_total) + parseFloat(item.line_tax)
-                      ).toFixed(2)}
+                      {formatPrice(parseFloat(item.line_total) + parseFloat(item.line_tax))}
                     </p>
                     <button
                       className="text-gray-500 mr-4 hover:text-red-500 cursor-pointer disabled:opacity-50"
@@ -411,7 +409,7 @@ const CartPage = () => {
                 <ul className="list-disc list-inside text-sm">
                   {(cartData?.coupons ?? []).map((coupon: any, index: any) => (
                     <li key={index}>
-                      {coupon.code} (Discount: -€{coupon.discount})
+                      {coupon.code} (Discount: -{formatPrice(coupon.discount)})
                     </li>
                   ))}
                 </ul>
@@ -428,22 +426,18 @@ const CartPage = () => {
               <p className="text-lg font-semibold">Cart totals</p>
               <div className="flex justify-between text-sm">
                 <p>SUBTOTAL</p>
-                <p>€{cartData?.subtotal}</p>
+                <p>{formatPrice(cartData?.subtotal || 0)}</p>
               </div>
               <div className="flex justify-between text-sm text-green-600 font-semibold">
                 <p>Discounts</p>
                 <p>
-                  -€
-                  {(
-                    parseFloat(cartData?.discount_total || "0") +
-                    parseFloat(cartData?.discount_tax || "0")
-                  ).toFixed(2)}
+                  -{formatPrice(parseFloat(cartData?.discount_total || "0") + parseFloat(cartData?.discount_tax || "0"))}
                 </p>
               </div>
 
               <div className="flex justify-between font-semibold text-base border-t pt-4">
                 <p>SHIPPING</p>
-                <p>€{cartData?.shipping.total}</p>
+                <p>{formatPrice(cartData?.shipping.total || 0)}</p>
               </div>
 
               {/* Conditional rendering for shipping methods */}
@@ -466,7 +460,7 @@ const CartPage = () => {
                         disabled={isUpdatingCartTotals}
                       />
                       <span>
-                        {method.label} (Costs: €{method.cost})
+                        {method.label} (Costs: {formatPrice(method.cost)})
                       </span>
                     </label>
                   ))}
@@ -474,7 +468,7 @@ const CartPage = () => {
               )}
               <div className="flex justify-between font-semibold text-lg border-t pt-4">
                 <p>TOTAL</p>
-                <p>€{cartData?.total}</p>
+                <p>{formatPrice(cartData?.total || 0)}</p>
               </div>
               <Link href={isAuthenticated ? "/checkout" : "/checkout"}>
                 <button

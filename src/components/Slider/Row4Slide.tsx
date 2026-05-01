@@ -3,6 +3,7 @@ import WishlistButton from "@/components/WishlistButton";
 import { Product } from "@/types/products";
 import Link from "next/link";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils/currency";
 
 interface Row4SlideProps {
   product: Product;
@@ -59,15 +60,15 @@ const Row4Slide: React.FC<Row4SlideProps> = ({ product }) => {
             {hasDiscount ? (
               <>
                 <span className="text-gray-400 line-through mr-2">
-                  €{product.regular_price}
+                  {formatPrice(product.regular_price)}
                 </span>
                 <span className="text-red-600 font-semibold">
-                  €{product.sale_price}
+                  {formatPrice(product.sale_price)}
                 </span>
               </>
             ) : (
               <span className="text-gray-800 font-medium">
-                €{product.price}
+                {formatPrice(product.price)}
               </span>
             )}
           </div>

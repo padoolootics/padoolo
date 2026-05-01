@@ -19,6 +19,8 @@ import Link from "next/link";
 //   rating?: number;
 // }
 
+import { formatPrice } from "@/lib/utils/currency";
+
 interface Props {
   product: Product;
 }
@@ -176,7 +178,7 @@ export default function CenterTabbedSlider({
                         {p.name}
                       </h3>
                       <p className="text-sm text-left text-[16px] font-[400]">
-                        €{p.price}
+                        {formatPrice(p.price)}
                       </p>
                     </div>
                   </Link>

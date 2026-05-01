@@ -5,6 +5,7 @@ import { Heart } from "lucide-react";
 import Image from "next/image";
 import WishlistButton from "@/components/WishlistButton";
 import Link from "next/link";
+import { formatPrice } from "@/lib/utils/currency";
 
 interface ProductCardProps {
   product: any;
@@ -68,8 +69,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
           {/* Pricing */}
           <div className="flex items-center space-x-2 justify-center">
-            <span className="text-gray-500 font-medium text-base ">
-              €{is_variable ? price_range.min + "-" + price_range.max : price}
+            <span className="text-amber-600 font-semibold text-lg ">
+              {is_variable && price_range 
+                ? `${formatPrice(price_range.min)} - ${formatPrice(price_range.max)}` 
+                : formatPrice(price)}
             </span>
           </div>
 

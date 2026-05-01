@@ -3,6 +3,8 @@
 import { Product } from '@/types/products';
 import { Heart } from 'lucide-react';
 
+import { formatPrice } from '@/lib/utils/currency';
+
 interface ProductCardProps {
   image: string;
   name: string;
@@ -72,9 +74,9 @@ const ProductCard = ({
 
         {/* Pricing */}
         <div className="flex items-center space-x-2">
-          <span className="text-gray-800 font-semibold text-sm">€{price}</span>
+          <span className="text-gray-800 font-semibold text-sm">{formatPrice(price)}</span>
           {oldPrice && (
-            <span className="text-gray-400 text-xs line-through">€{oldPrice}</span>
+            <span className="text-gray-400 text-xs line-through">{formatPrice(oldPrice)}</span>
           )}
         </div>
       </div>
