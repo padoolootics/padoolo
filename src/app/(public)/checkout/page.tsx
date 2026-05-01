@@ -143,9 +143,14 @@ const CheckoutPage = () => {
       const input = document.getElementById(inputId) as HTMLInputElement;
       if (!input) return;
 
+      // Avoid multiple initializations on the same element
+      if ((input as any)._autocomplete) return;
+
       const autocomplete = new google.maps.places.Autocomplete(input, {
         fields: ['address_components', 'formatted_address']
       });
+
+      (input as any)._autocomplete = autocomplete;
 
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
@@ -172,11 +177,13 @@ const CheckoutPage = () => {
 
     const handleLoad = () => {
       initAutocomplete('billing-address_1', 'billing');
-      initAutocomplete('shipping-address_1', 'shipping');
+      if (shipToDifferentAddress) {
+        // Use a small timeout to ensure the element is in the DOM
+        setTimeout(() => initAutocomplete('shipping-address_1', 'shipping'), 100);
+      }
     };
 
     if (typeof google === 'undefined') {
-      // Check if script is already being loaded
       if (!document.getElementById(SCRIPT_ID)) {
         const script = document.createElement('script');
         script.id = SCRIPT_ID;
@@ -185,7 +192,6 @@ const CheckoutPage = () => {
         script.onload = handleLoad;
         document.body.appendChild(script);
       } else {
-        // Script is already there, wait for it to load if it hasn't
         const existingScript = document.getElementById(SCRIPT_ID);
         if (existingScript) {
           existingScript.addEventListener('load', handleLoad);
@@ -201,7 +207,7 @@ const CheckoutPage = () => {
         existingScript.removeEventListener('load', handleLoad);
       }
     };
-  }, [GOOGLE_API_KEY]);
+  }, [GOOGLE_API_KEY, shipToDifferentAddress]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: "billing" | "shipping") => {
     const { name, value } = e.target;

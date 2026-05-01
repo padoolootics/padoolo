@@ -14,7 +14,14 @@ export interface CouponValidationResponse {
 
 const CheckoutServices = {
   getPaymentGateways: async (): Promise<PaymentGateway[]> => {
-    return requests.get<PaymentGateway[]>('/payment-gateways');
+    try {
+      const response = await fetch('/api/payment-gateways');
+      if (!response.ok) throw new Error('Failed to fetch payment gateways');
+      return response.json();
+    } catch (error) {
+      console.error('Error in getPaymentGateways:', error);
+      throw error;
+    }
   },
 
   validateCoupon: async (couponCode: string): Promise<CouponValidationResponse> => {

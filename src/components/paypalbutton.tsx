@@ -29,7 +29,9 @@ const PayPalComponent = ({
   couponCode,
 }: PayPalComponentProps) => {
   const initialOptions = {
-    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
+    clientId: process.env.NEXT_PUBLIC_APP_MODE === 'testing' 
+      ? process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "" 
+      : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_PROD_ID || "",
     currency: "EUR",
     intent: "capture",
   };
