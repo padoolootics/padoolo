@@ -79,7 +79,7 @@ const Grid2x2Slide: React.FC<Grid2x2SlideProps> = ({ products }) => {
 
                 {/* Price Info */}
                 <div className="text-sm">
-                  {hasDiscount ? (
+                  {hasDiscount && product.sale_price !== null ? (
                     <>
                       <span className="text-gray-400 line-through mr-2">
                         {formatPrice(product.regular_price)}

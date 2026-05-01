@@ -5,11 +5,13 @@ export const decodeHtmlEntity = (html: string) => {
   return txt.value;
 };
 
-export const formatPrice = (price: string | number, symbol: string = '€') => {
+export const formatPrice = (price: string | number | null | undefined, symbol: string = '€') => {
+  if (price === null || price === undefined) return "";
   const cleanSymbol = symbol === '&euro;' ? '€' : symbol;
   // If cleanSymbol still contains HTML entities, decode it
   const finalSymbol = cleanSymbol.includes('&') ? decodeHtmlEntity(cleanSymbol) : cleanSymbol;
   
   const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+  if (isNaN(numericPrice)) return "";
   return `${finalSymbol}${numericPrice.toFixed(2)}`;
 };

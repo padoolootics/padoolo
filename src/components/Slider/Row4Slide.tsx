@@ -57,7 +57,7 @@ const Row4Slide: React.FC<Row4SlideProps> = ({ product }) => {
 
           {/* Price */}
           <div className="text-sm mt-1">
-            {hasDiscount ? (
+            {hasDiscount && product.sale_price !== null ? (
               <>
                 <span className="text-gray-400 line-through mr-2">
                   {formatPrice(product.regular_price)}

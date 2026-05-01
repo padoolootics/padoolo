@@ -72,7 +72,7 @@ const SingleSlide: React.FC<SingleSlideProps> = ({ product }) => {
 
         {/* Price Info */}
         <div className="text-sm mt-1">
-          {hasDiscount ? (
+          {hasDiscount && product.sale_price !== null ? (
             <>
               <span className="text-gray-400 line-through mr-2">
                 {formatPrice(product.regular_price)}
