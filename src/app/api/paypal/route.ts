@@ -210,11 +210,11 @@ export async function POST(req: Request) {
       }
 
       // Clean the total from WooCommerce: remove any currency symbols and ensure proper decimal format
-      let actualTotal = String(wooOrder.total).replace(/[^\d.]/g, '');
+      const actualTotal = String(wooOrder.total).replace(/[^\d.]/g, '');
       const numericActualTotal = parseFloat(actualTotal);
 
       // Clean the total provided by client for comparison
-      let clientTotal = String(wooOrderTotal).replace(/[^\d.]/g, '');
+      const clientTotal = String(wooOrderTotal).replace(/[^\d.]/g, '');
       const numericClientTotal = parseFloat(clientTotal);
 
       console.log(`Security Check: ClientTotal=${numericClientTotal}, ActualTotal=${numericActualTotal}`);
