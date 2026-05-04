@@ -22,6 +22,28 @@ const PAYPAL_CLIENT_SECRET =
     ? process.env.PAYPAL_CLIENT_SECRET
     : process.env.PAYPAL_CLIENT_PROD_SECRET;
 
+// Function to fetch a WooCommerce order securely
+async function getWooCommerceOrder(orderId: number) {
+  if (!WOOCOMMERCE_URL || !CONSUMER_KEY || !CONSUMER_SECRET) {
+    throw new Error("WooCommerce credentials not set.");
+  }
+
+  const url = `${WOOCOMMERCE_URL}/wp-json/wc/v3/orders/${orderId}`;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Basic ${Buffer.from(`${CONSUMER_KEY}:${CONSUMER_SECRET}`).toString("base64")}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch WooCommerce order ${orderId}`);
+  }
+
+  return response.json();
+}
+
 // Function to generate an access token for PayPal API calls
 async function generateAccessToken(): Promise<string> {
   const auth = Buffer.from(
@@ -47,8 +69,6 @@ async function createPayPalOrder(
   accessToken: string,
   wooOrderTotal: string
 ) {
-  // IMPORTANT: The PayPal API requires a total amount, not a list of individual cart items.
-  // We're using the secure `wooOrderTotal` passed from the client here.
   const response = await fetch(`${PAYPAL_API_BASE_URL}/v2/checkout/orders`, {
     method: "POST",
     headers: {
@@ -111,47 +131,6 @@ async function capturePayPalPayment(accessToken: string, orderId: string) {
     throw error;
   }
 }
-
-// NEW FUNCTION: Update the WooCommerce order status
-// async function updateWooCommerceOrder(orderId: number, status: string) {
-//     if (!WOOCOMMERCE_URL || !CONSUMER_KEY || !CONSUMER_SECRET) {
-//         console.error("WooCommerce credentials not set. Order status cannot be updated.");
-//         return;
-//     }
-
-//     // Prepare the update data
-//     const data = {
-//         status: status,
-//     };
-
-//     // Construct the API endpoint URL for a specific order
-//     const updateUrl = `${WOOCOMMERCE_URL}/wp-json/wc/v3/orders/${orderId}`;
-
-//     try {
-//         const response = await fetch(updateUrl, {
-//             method: 'PUT',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 // Use Basic Auth for WooCommerce API
-//                 'Authorization': `Basic ${Buffer.from(`${CONSUMER_KEY}:${CONSUMER_SECRET}`).toString('base64')}`,
-//             },
-//             body: JSON.stringify(data),
-//         });
-
-//         if (!response.ok) {
-//             const errorData = await response.json();
-//             console.error(`Failed to update WooCommerce order status for ID ${orderId}:`, errorData);
-//             throw new Error(`WooCommerce API returned a non-ok status: ${response.status}`);
-//         }
-
-//         const updatedOrder = await response.json();
-//         console.log(`WooCommerce order ${orderId} status updated to: ${updatedOrder.status}`);
-//         return updatedOrder;
-//     } catch (error) {
-//         console.error(`An error occurred while updating WooCommerce order ${orderId}:`, error);
-//         throw error;
-//     }
-// }
 
 // UPDATED FUNCTION: Update the WooCommerce order status with PayPal payment data
 async function updateWooCommerceOrder(orderId: number, status: string, captureDetails: any) {
@@ -220,41 +199,44 @@ export async function POST(req: Request) {
     const accessToken = await generateAccessToken();
 
     if (action === "createOrder") {
-      // Clean the total: remove any currency symbols and ensure proper decimal format
-      // WooCommerce API usually returns "123.45", but we handle edge cases here
-      let cleanTotal = String(wooOrderTotal).trim();
-      
-      // If it contains a comma and no dot, it's likely a European decimal (e.g. "123,45")
-      if (cleanTotal.includes(',') && !cleanTotal.includes('.')) {
-        cleanTotal = cleanTotal.replace(',', '.');
+      // SECURITY: Fetch the actual order from WooCommerce to verify the total
+      // This prevents price manipulation from the client side.
+      let wooOrder;
+      try {
+        wooOrder = await getWooCommerceOrder(wooOrderId);
+      } catch (err) {
+        console.error("Order verification failed:", err);
+        return NextResponse.json({ error: "Order not found." }, { status: 404 });
+      }
+
+      // Clean the total from WooCommerce: remove any currency symbols and ensure proper decimal format
+      let actualTotal = String(wooOrder.total).replace(/[^\d.]/g, '');
+      const numericActualTotal = parseFloat(actualTotal);
+
+      // Clean the total provided by client for comparison
+      let clientTotal = String(wooOrderTotal).replace(/[^\d.]/g, '');
+      const numericClientTotal = parseFloat(clientTotal);
+
+      console.log(`Security Check: ClientTotal=${numericClientTotal}, ActualTotal=${numericActualTotal}`);
+
+      // Allow for small rounding differences (e.g. 0.01) but reject significant differences
+      if (Math.abs(numericClientTotal - numericActualTotal) > 0.01) {
+        console.error("Security Alert: Price manipulation detected!");
+        return NextResponse.json({ error: "Price discrepancy detected. Order rejected." }, { status: 400 });
       }
       
-      // Remove all non-numeric characters except for the dot
-      cleanTotal = cleanTotal.replace(/[^\d.]/g, '');
+      const cleanTotal = numericActualTotal.toFixed(2);
       
-      const numericTotal = parseFloat(cleanTotal);
-      if (isNaN(numericTotal) || numericTotal <= 0) {
-        console.error("Invalid numeric total for PayPal:", cleanTotal);
-        return NextResponse.json({ error: "Invalid order total. Must be greater than 0." }, { status: 400 });
-      }
-      
-      cleanTotal = numericTotal.toFixed(2);
-      
-      console.log(`Sanitized total for PayPal: Original="${wooOrderTotal}", Cleaned="${cleanTotal}"`);
+      console.log(`Creating PayPal order for verified total: ${cleanTotal}`);
       
       const order = await createPayPalOrder(
         accessToken,
         cleanTotal
       );
-      console.log("PayPal API createOrder response:", JSON.stringify(order, null, 2));
       
       if (!order.id) {
         console.error("PayPal order creation failed. Details:", JSON.stringify(order, null, 2));
-        let errorMessage = order.message || "Unknown PayPal error";
-        if (order.details && order.details.length > 0) {
-          errorMessage += ": " + order.details.map((d: any) => d.description || d.issue).join(", ");
-        }
-        return NextResponse.json({ error: errorMessage, details: order }, { status: 400 });
+        return NextResponse.json({ error: order.message || "Failed to create PayPal order" }, { status: 400 });
       }
 
       return NextResponse.json({ orderID: order.id });
@@ -263,9 +245,21 @@ export async function POST(req: Request) {
     if (action === "capturePayment") {
       const capture = await capturePayPalPayment(accessToken, orderId);
       
-      // We'll update the WooCommerce order only if the PayPal payment was successfully COMPLETED
       if (capture.status === "COMPLETED") {
-          // Pass the PayPal capture details to the update function
+          // SECONDARY SECURITY: Verify the captured amount matches the WooCommerce order
+          const wooOrder = await getWooCommerceOrder(wooOrderId);
+          const capturedAmount = parseFloat(capture.purchase_units[0]?.payments?.captures[0]?.amount?.value || "0");
+          const expectedAmount = parseFloat(String(wooOrder.total).replace(/[^\d.]/g, ''));
+
+          console.log(`Capture verification: Captured=${capturedAmount}, Expected=${expectedAmount}`);
+
+          if (Math.abs(capturedAmount - expectedAmount) > 0.01) {
+            console.error("Critical Security Alert: Captured amount does not match order total!");
+            // We still update the order but maybe mark it for manual review or as "on-hold" instead of "processing"
+            await updateWooCommerceOrder(wooOrderId, "on-hold", capture);
+            return NextResponse.json({ ...capture, status: "REVIEW_REQUIRED", message: "Amount mismatch detected." });
+          }
+
           await updateWooCommerceOrder(wooOrderId, "processing", capture);
       }
 
